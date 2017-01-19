@@ -14,8 +14,9 @@ void download_test(std::string url){
     Connection con;
     if(con.connect(url)){
         if(con.save_data_to_file("tempfile.zip")){
-            std::cout << "\033[1;32mDownloading " << url << " PASSED\033[0m\n" << std::endl;
-            remove("tempfile.zip");
+            if(remove("tempfile.zip") == 0){
+                std::cout << "\033[1;32mDownloading " << url << " PASSED\033[0m\n" << std::endl;
+            }
         } else {
             std::cout << "\033[1;31mDownloading " << url << " FAILED\033[0m\n" << std::endl;
         }
