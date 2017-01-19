@@ -2,7 +2,7 @@ NAME=Addon-Manager
 CCXX=g++
 CCXXFLAGS=-std=c++11 -Wall -Wextra
 LDFLAGS=-lcurl
-SOURCES=main.cpp Connection.cpp test.cpp
+SOURCES=main.cpp Connection.cpp
 SRC_FILES=$(addprefix src/,$(SOURCES))
 TESTS=$(filter-out main.cpp,$(SOURCES))
 TST_FILES=$(addprefix src/,$(TESTS))
