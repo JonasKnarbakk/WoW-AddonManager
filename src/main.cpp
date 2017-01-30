@@ -1,5 +1,8 @@
-// Description: New project
-// Author: Jonas Knarbakk ()
+// Description: This application is an Addon Manager for World of Warcraft
+// made primarily for GNU/Linux it utilizes scraping of the curse website
+// to automate the process of downloading addons and keeping them up to date.
+//
+// Author: Jonas Knarbakk
 
 #include <iostream>
 #include "Connection.h"
