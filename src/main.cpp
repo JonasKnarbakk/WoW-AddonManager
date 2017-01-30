@@ -6,11 +6,13 @@
 
 #include <iostream>
 #include <thread>
+#include <algorithm>
 #include "Connection.h"
 #include "Addon.hpp"
 #include "HTMLParser.hpp"
 
 std::vector<std::string> filesCreated;
+std::vector<Addon> addons;
 
 void downloadHTML(std::string url, unsigned int count){
     Connection conn;
@@ -25,17 +27,22 @@ void downloadHTML(std::string url, unsigned int count){
 int main(){
 
     std::string website = "https://mods.curse.com/search?game-slug=wow&search=";
-    std::string search = "recount";
+    std::string search;
+    std::cout << "Search: ";
+    std::getline(std::cin, search);
+    std::transform(search.begin(), search.end(), search.begin(), [](char ch) {
+        return ch == ' ' ? '+' : ch;
+    });
     std::string finalSearch = website + search;
     Connection con;
     if(con.connect(finalSearch)){
-        if(con.save_data_to_file("searchResults.html")){
-            filesCreated.push_back("searchResults.html");
-        }
+        con.save_data_to_file("searchResults.html");
     }
     
     HTMLParser parse("searchResults.html");
     parse.init();
+
+    remove("searchResults.html");
 
     // Do a multithreaded download for the HTML for all addons found
     std::vector<std::string> result = parse.getAddonLinks();
@@ -55,15 +62,18 @@ int main(){
     for(tit = begin(threads); tit != end(threads); ++tit){
         tit->join();
     }
-
-    HTMLParser p("addon1.html");
-    Addon a = p.getAddon();
-    std::cout << a << std::endl;
-
     // Cleanup, delete all files created
     for(it = begin(filesCreated); it != end(filesCreated); ++it){
         std::string filename = *it;
+        HTMLParser p(filename);
+        addons.push_back(p.getAddon());
         remove(filename.c_str());
+    }
+
+    std::vector<Addon>::iterator ait;
+    // Print search result with details
+    for(ait = begin(addons); ait != end(addons); ++ait){
+        std::cout << *ait << std::endl;
     }
     
     return 0;
