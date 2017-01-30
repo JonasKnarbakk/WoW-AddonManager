@@ -6,9 +6,21 @@
 
 class GUI{
     private:
-        GtkWidget * m_Window;
+        GtkWidget *m_Window;
+        GtkWidget *m_TabView;
+        GtkWidget *m_SearchContainer;
+        GtkWidget *m_InstalledContainer;
+        GtkWidget *m_SettingsContainer;
         unsigned int m_Width;
         unsigned int m_Height;
+
+        void setResizable(bool resizable);
+        void addTabbedView();
+        void addTabSearch();
+        void addTabInstalled();
+        void addTabSettings();
+        void addSearch();
+        GtkWidget *findChild(GtkWidget *parent, const gchar *name);
     public:
         GUI(int * argc, char * argv[]);
         ~GUI();
@@ -17,7 +29,6 @@ class GUI{
         void setDefaultSize(unsigned int width, unsigned int height);
         void setWidth(unsigned int width);
         void setHeigth(unsigned int heigth);
-        void setResizable(bool resizable);
 };
 
 #endif
