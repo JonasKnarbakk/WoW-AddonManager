@@ -1,6 +1,6 @@
 NAME=Addon-Manager
 CXX=g++
-CXXFLAGS=-std=c++11 -Wall -Wextra -g
+CXXFLAGS=-std=c++11 -Wall -Wextra -g -pthread
 LDFLAGS=-lcurl
 SOURCES=main.cpp Connection.cpp Addon.cpp HTMLParser.cpp
 SRC_FILES=$(addprefix src/,$(SOURCES))
