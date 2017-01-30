@@ -1,8 +1,8 @@
 NAME=Addon-Manager
 CXX=g++
-CXXFLAGS=-std=c++11 -Wall -Wextra
+CXXFLAGS=-std=c++11 -Wall -Wextra -g
 LDFLAGS=-lcurl
-SOURCES=main.cpp Connection.cpp Addon.cpp
+SOURCES=main.cpp Connection.cpp Addon.cpp HTMLParser.cpp
 SRC_FILES=$(addprefix src/,$(SOURCES))
 TESTS=$(filter-out main.cpp,$(SOURCES))
 TST_FILES=$(addprefix src/,$(TESTS))

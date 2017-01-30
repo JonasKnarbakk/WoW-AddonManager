@@ -7,18 +7,26 @@
 #include <iostream>
 #include "Connection.h"
 #include "Addon.hpp"
+#include "HTMLParser.hpp"
 
 int main(){
 
-    // Connection con;
-    // if(con.connect("https://mods.curse.com/addons/wow")){
-        // con.save_html_to_file("tempfile.html");
-    // }
+    std::string website = "https://mods.curse.com/search?game-slug=wow&search=";
+    std::string search = "recount";
+    std::string finalSearch = website + search;
+    Connection con;
+    if(con.connect(finalSearch)){
+        con.save_data_to_file("tempfile.html");
+    }
     
-    Addon a("Recout");
-    
-    std::cout << a << std::endl;
+    HTMLParser parse("tempfile.html");
+
+    std::vector<std::string> result = parse.getAddonLinks();
+    std::vector<std::string>::iterator it;
+
+    for(it = begin(result); it != end(result); ++it){
+        std::cout << *it << std::endl;
+    }
     
     return 0;
-
 }
