@@ -77,10 +77,10 @@ void GUI::addTabSettings(){
 
 void GUI::addSearch(){
     GtkWidget * hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
-    gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Search:"), false, false, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Search: "), false, false, 0);
     GtkWidget *searchEntry = gtk_entry_new();
     // TODO: Bind this signal to the search function that should be in its own backend class
     g_signal_connect(G_OBJECT(searchEntry), "activate", G_CALLBACK(gtk_main_quit), NULL);
-    gtk_box_pack_start(GTK_BOX(hbox), searchEntry, false, false, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), searchEntry, true, true, 0);
     gtk_box_pack_end(GTK_BOX(m_SearchContainer), hbox, false, false, 0);
 }
