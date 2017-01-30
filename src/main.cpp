@@ -35,6 +35,7 @@ int main(){
     }
     
     HTMLParser parse("searchResults.html");
+    parse.init();
 
     // Do a multithreaded download for the HTML for all addons found
     std::vector<std::string> result = parse.getAddonLinks();
@@ -54,6 +55,10 @@ int main(){
     for(tit = begin(threads); tit != end(threads); ++tit){
         tit->join();
     }
+
+    HTMLParser p("addon1.html");
+    Addon a = p.getAddon();
+    std::cout << a << std::endl;
 
     // Cleanup, delete all files created
     for(it = begin(filesCreated); it != end(filesCreated); ++it){

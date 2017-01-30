@@ -9,9 +9,10 @@ Addon::Addon(){
     m_Version = "";
     m_Supports = "";
     m_Image = "";
+    m_TotalDownloads = "";
 }
 
-Addon::Addon(std::string name, std::string version, std::string supports, std::string image, unsigned int downloads){
+Addon::Addon(std::string name, std::string version, std::string supports, std::string image, std::string downloads){
     m_Name = name;
     m_Version = version;
     m_Supports = supports;
@@ -38,7 +39,7 @@ std::string Addon::getImageLink() const{
     return m_Image;
 }
 
-unsigned int Addon::getTotalDownloads() const{
+std::string Addon::getTotalDownloads() const{
     return m_TotalDownloads;
 }
 
@@ -58,7 +59,7 @@ void Addon::setImageLink(std::string url){
     m_Image = url;
 }
 
-void Addon::setTotaltDownloads(unsigned int downloads){
+void Addon::setTotaltDownloads(std::string downloads){
     m_TotalDownloads = downloads;
 }
 

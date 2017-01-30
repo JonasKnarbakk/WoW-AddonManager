@@ -10,7 +10,7 @@ class Addon{
         std::string m_Version;
         std::string m_Supports;
         std::string m_Image;
-        unsigned int m_TotalDownloads;
+        std::string m_TotalDownloads;
     public:
         // Default constructor
         Addon();
@@ -19,7 +19,7 @@ class Addon{
                 std::string version = "Not set",
                 std::string supports = "Not set",
                 std::string image = "Not set",
-                unsigned int downloads = 0);
+                std::string downloads = "Not set");
         ~Addon();
 
         // Returns the name of the addon
@@ -31,7 +31,7 @@ class Addon{
         // Returns the link to the addons display image
         std::string getImageLink() const;
         // Returns the total number of downloads for the addon
-        unsigned int getTotalDownloads() const;
+        std::string getTotalDownloads() const;
         
         // Set the addon name
         void setName(std::string name);
@@ -42,7 +42,7 @@ class Addon{
         // Set the link for the image that showcase the addon
         void setImageLink(std::string url);
         // Set the number the addon has for total downloads
-        void setTotaltDownloads(unsigned int downloads);
+        void setTotaltDownloads(std::string downloads);
         
         friend std::ostream &operator <<(std::ostream &output, const Addon &addon);
 };
