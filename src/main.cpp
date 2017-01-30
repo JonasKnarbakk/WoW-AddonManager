@@ -10,6 +10,7 @@
 #include "Connection.h"
 #include "Addon.hpp"
 #include "HTMLParser.hpp"
+#include "GUI.hpp"
 
 std::vector<std::string> filesCreated;
 std::vector<Addon> addons;
@@ -24,7 +25,7 @@ void downloadHTML(std::string url, unsigned int count){
     }
 }
 
-int main(){
+int main(int argc, char * argv[]){
 
     std::string website = "https://mods.curse.com/search?game-slug=wow&search=";
     std::string search;
@@ -76,5 +77,7 @@ int main(){
         std::cout << *ait << std::endl;
     }
     
+    GUI app(&argc, argv);    
+
     return 0;
 }
