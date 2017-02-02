@@ -29,3 +29,6 @@ bool ReturnValue::expectedBool(bool &value, bool &expected){
     return value == expected;
 }
 
+bool ReturnValue::expectedString(std::string &value, std::string &expected){
+    return value.compare(expected) == 0;
+}

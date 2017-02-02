@@ -1,6 +1,8 @@
 #ifndef RETURNVALUE_HPP
 #define RETURNVALUE_HPP
 
+#include <string>
+
 class ReturnValue{
     private:
 
@@ -16,6 +18,7 @@ class ReturnValue{
         bool expectedInteger(int &value, int &expected);
         bool expectedDouble(double &value, double &expected);
         bool expectedBool(bool &value, bool &expected);
+        bool expectedString(std::string &value, std::string &expected);
         
 };
 
