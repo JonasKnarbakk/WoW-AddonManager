@@ -56,11 +56,12 @@ void parsing_test(){
         } else {
             printRed("FAILED to parse addon image link!");
         }
-        if(recount.getTotalDownloads().find("94,13") == 0){
+        if(recount.getTotalDownloads().find("94,") == 0){
             printGreen("Parsed addon total downalods successfully!");
         } else {
             printRed("FAILED to parse addon total downloads!");
         }
+        remove("parsingTest.html");
     } else {
         printRed("Parsing Test: Failed to connect to https://mods.curse.com/addons/wow/recount");
     }
