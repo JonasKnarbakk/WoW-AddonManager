@@ -2,7 +2,18 @@
 // Created by Jonas Knarbakk (11:21:12-30/01/2017)
 
 #include "GUI.hpp"
+#include "Core.hpp"
 #include <iostream>
+
+extern "C" void searchEntryActivated(GtkWidget *widget, GtkWidget *entry){
+    Core c;
+    const gchar *entry_text;
+    entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
+    std::string searchText = entry_text;
+    c.search(searchText);
+}
+
+GtkWidget * GUI::m_SearchContainer;
 
 GUI::GUI(int * argc, char * argv[]){
     gtk_init(argc, &argv);
@@ -80,7 +91,30 @@ void GUI::addSearch(){
     gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Search: "), false, false, 0);
     GtkWidget *searchEntry = gtk_entry_new();
     // TODO: Bind this signal to the search function that should be in its own backend class
-    g_signal_connect(G_OBJECT(searchEntry), "activate", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(G_OBJECT(searchEntry), "activate", G_CALLBACK(searchEntryActivated), searchEntry);
     gtk_box_pack_start(GTK_BOX(hbox), searchEntry, true, true, 0);
     gtk_box_pack_end(GTK_BOX(m_SearchContainer), hbox, false, false, 0);
+}
+
+void GUI::addAddon(std::string name, std::string version, std::string supported, std::string image, std::string downloads){
+    // Container
+    GtkWidget * hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+
+    // Components
+    GtkWidget * iThumbnail = gtk_image_new_from_resource(image.c_str());
+    GtkWidget * lName = gtk_label_new(name.c_str());
+    GtkWidget * lVersion = gtk_label_new(version.c_str());
+    GtkWidget * lSupported = gtk_label_new(supported.c_str());
+    GtkWidget * lDownloads = gtk_label_new(downloads.c_str());
+
+    // Add too container
+    gtk_box_pack_start(GTK_BOX(hbox), iThumbnail, false, false, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), lName, false, false, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), lVersion, false, false, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), lSupported, false, false, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), lDownloads, false, false, 0);
+
+    // Add too search tab
+    gtk_box_pack_start(GTK_BOX(m_SearchContainer), hbox, false, false, 0);
+    gtk_widget_show_all(m_SearchContainer);
 }

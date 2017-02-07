@@ -8,7 +8,7 @@ class GUI{
     private:
         GtkWidget *m_Window;
         GtkWidget *m_TabView;
-        GtkWidget *m_SearchContainer;
+        static GtkWidget *m_SearchContainer;
         GtkWidget *m_InstalledContainer;
         GtkWidget *m_SettingsContainer;
         unsigned int m_Width;
@@ -28,6 +28,7 @@ class GUI{
         void setDefaultSize(unsigned int width, unsigned int height);
         void setWidth(unsigned int width);
         void setHeigth(unsigned int heigth);
+        static void addAddon(std::string name, std::string version, std::string supported, std::string image, std::string downloads);
 };
 
 #endif

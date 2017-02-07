@@ -14,6 +14,7 @@ Core::Core(){
 Core::~Core(){
 }
 
+
 std::vector<std::string> filesCreated;
 std::vector<Addon> addons;
 
@@ -27,8 +28,7 @@ void downloadHTML(std::string url, unsigned int count){
     }
 }
 
-void search(){
-    std::string search = "Recount";
+void Core::search(std::string search){
     std::string website = "https://mods.curse.com/search?game-slug=wow&search=";
     std::transform(search.begin(), search.end(), search.begin(), [](char ch) {
         return ch == ' ' ? '+' : ch;
@@ -73,6 +73,6 @@ void search(){
     std::vector<Addon>::iterator ait;
     // Print search result with details
     for(ait = begin(addons); ait != end(addons); ++ait){
-        // addAddon(ait->getName(), ait->getVersion(), ait->getSupportedVersion(), ait->getImageLink(), ait->getTotalDownloads());
+        GUI::addAddon(ait->getName(), ait->getVersion(), ait->getSupportedVersion(), ait->getImageLink(), ait->getTotalDownloads());
     }
 }

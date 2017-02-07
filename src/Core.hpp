@@ -10,7 +10,7 @@ class Core{
         Core();
         ~Core();
 
-        static void search();
+        void search(std::string search);
 };
 
 #endif
