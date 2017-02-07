@@ -2,7 +2,7 @@ NAME=Addon-Manager
 CXX=g++
 CXXFLAGS=-std=c++11 -Wall -Wextra -g -pthread
 LDFLAGS=-lcurl `pkg-config --libs --cflags gtk+-3.0`
-SOURCES=main.cpp Connection.cpp Addon.cpp HTMLParser.cpp GUI.cpp
+SOURCES=main.cpp Connection.cpp Addon.cpp HTMLParser.cpp GUI.cpp Core.cpp
 SRC_FILES=$(addprefix src/,$(SOURCES))
 TESTS=$(filter-out main.cpp,$(SOURCES))
 TST_FILES=$(addprefix src/,$(TESTS))
