@@ -20,7 +20,6 @@ class GUI{
         void addTabInstalled();
         void addTabSettings();
         void addSearch();
-        GtkWidget *findChild(GtkWidget *parent, const gchar *name);
     public:
         GUI(int * argc, char * argv[]);
         ~GUI();

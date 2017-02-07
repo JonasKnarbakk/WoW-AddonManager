@@ -10,7 +10,7 @@ class Core{
         Core();
         ~Core();
 
-        extern void search();
+        static void search();
 };
 
 #endif

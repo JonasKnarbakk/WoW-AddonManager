@@ -73,6 +73,6 @@ void search(){
     std::vector<Addon>::iterator ait;
     // Print search result with details
     for(ait = begin(addons); ait != end(addons); ++ait){
-        GUI::addAddon(ait->getName(), ait->getVersion(), ait->getSupportedVersion(), ait->getImageLink(), ait->getTotalDownloads());
+        // addAddon(ait->getName(), ait->getVersion(), ait->getSupportedVersion(), ait->getImageLink(), ait->getTotalDownloads());
     }
 }
