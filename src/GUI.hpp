@@ -6,23 +6,8 @@
 
 class GUI{
     private:
-        GtkWidget *m_Window;
-        GtkWidget *m_TabView;
-        GtkWidget *m_SearchContainer;
-        GtkWidget *m_InstalledContainer;
-        GtkWidget *m_SettingsContainer;
-        unsigned int m_Width;
-        unsigned int m_Height;
-
-        void setResizable(bool resizable);
-        void addTabbedView();
-        void addTabSearch();
-        void addTabInstalled();
-        void addTabSettings();
-        void addSearch();
-        GtkWidget *findChild(GtkWidget *parent, const gchar *name);
     public:
-        GUI(int * argc, char * argv[]);
+        GUI();
         ~GUI();
 
         void setTitle(std::string title);
