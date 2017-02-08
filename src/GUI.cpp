@@ -101,7 +101,8 @@ void GUI::addAddon(std::string name, std::string version, std::string supported,
     GtkWidget * hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
 
     // Components
-    GtkWidget * iThumbnail = gtk_image_new_from_resource(image.c_str());
+    printf("Trying to load image: %s\n", image.c_str());
+    GtkWidget * iThumbnail = gtk_image_new_from_file(image.c_str());
     GtkWidget * lName = gtk_label_new(name.c_str());
     GtkWidget * lVersion = gtk_label_new(version.c_str());
     GtkWidget * lSupported = gtk_label_new(supported.c_str());

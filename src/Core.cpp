@@ -14,7 +14,6 @@ Core::Core(){
 Core::~Core(){
 }
 
-
 std::vector<std::string> filesCreated;
 std::vector<Addon> addons;
 
@@ -72,7 +71,19 @@ void Core::search(std::string search){
 
     std::vector<Addon>::iterator ait;
     // Print search result with details
+    int imageCount = 1;
     for(ait = begin(addons); ait != end(addons); ++ait){
-        GUI::addAddon(ait->getName(), ait->getVersion(), ait->getSupportedVersion(), ait->getImageLink(), ait->getTotalDownloads());
+        Connection conn;
+        if(conn.connect(ait->getImageLink())){
+            conn.save_data_to_file("thumbnail" + std::to_string(imageCount));
+        }
+        std::string imagePath = "thumbnail" + std::to_string(imageCount);
+        GUI::addAddon(ait->getName(), ait->getVersion(), ait->getSupportedVersion(), imagePath, ait->getTotalDownloads());
+        imageCount++;
+    }
+
+    for(int i = 1; i <= 10; i++){
+        std::string filename = "thumbnail" + std::to_string(i);
+        remove(filename.c_str());
     }
 }
