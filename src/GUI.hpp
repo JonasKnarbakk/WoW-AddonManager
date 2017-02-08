@@ -9,6 +9,7 @@ class GUI{
         GtkWidget *m_Window;
         GtkWidget *m_TabView;
         static GtkWidget *m_SearchContainer;
+        GtkWidget * m_ScrolledWindow;
         GtkWidget *m_InstalledContainer;
         GtkWidget *m_SettingsContainer;
         unsigned int m_Width;
@@ -19,6 +20,7 @@ class GUI{
         void addTabSearch();
         void addTabInstalled();
         void addTabSettings();
+        void addSrolledWindow();
         void addSearch();
     public:
         GUI(int * argc, char * argv[]);

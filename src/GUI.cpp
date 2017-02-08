@@ -28,6 +28,7 @@ GUI::GUI(int * argc, char * argv[]){
     addTabSearch();
     addTabInstalled();
     addTabSettings();
+    addSrolledWindow();
     addSearch();
     // Bind events
     g_signal_connect(G_OBJECT(m_Window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
@@ -66,24 +67,24 @@ void GUI::addTabbedView(){
 }
 
 void GUI::addTabSearch(){
+    m_ScrolledWindow = gtk_scrolled_window_new(NULL, NULL);
+    gtk_notebook_append_page(GTK_NOTEBOOK(m_TabView), m_ScrolledWindow, gtk_label_new("Search"));
+
     m_SearchContainer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
-    GtkWidget * scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
-    gtk_box_pack_start(GTK_BOX(m_SearchContainer), scrolledWindow, false, false, 0);
-    gtk_notebook_append_page(GTK_NOTEBOOK(m_TabView), m_SearchContainer, gtk_label_new("Search"));
+    gtk_container_add(GTK_CONTAINER(m_ScrolledWindow), m_SearchContainer);
 }
 
 void GUI::addTabInstalled(){
     m_InstalledContainer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
-    GtkWidget * scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
-    gtk_box_pack_start(GTK_BOX(m_InstalledContainer), scrolledWindow, false, false, 0);
     gtk_notebook_append_page(GTK_NOTEBOOK(m_TabView), m_InstalledContainer, gtk_label_new("Installed"));
 }
 
 void GUI::addTabSettings(){
     m_SettingsContainer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
-    GtkWidget * scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
-    gtk_box_pack_start(GTK_BOX(m_SettingsContainer), scrolledWindow, false, false, 0);
     gtk_notebook_append_page(GTK_NOTEBOOK(m_TabView), m_SettingsContainer, gtk_label_new("Settings"));
+}
+
+void GUI::addSrolledWindow(){
 }
 
 void GUI::addSearch(){
