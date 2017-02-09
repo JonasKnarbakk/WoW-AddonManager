@@ -28,8 +28,6 @@ GUI::GUI(int * argc, char * argv[]){
     addTabSearch();
     addTabInstalled();
     addTabSettings();
-    addSrolledWindow();
-    addSearch();
     // Bind events
     g_signal_connect(G_OBJECT(m_Window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
     // Show all and start the gtk main loop
@@ -67,11 +65,33 @@ void GUI::addTabbedView(){
 }
 
 void GUI::addTabSearch(){
+    // Add the vertical container to the Search Tab
+    GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
+    gtk_notebook_append_page(GTK_NOTEBOOK(m_TabView), vbox, gtk_label_new("Search"));
+
+    // Create the top labels for the search tab
+    GtkWidget *topLabels = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+    GtkWidget *lImage = gtk_label_new("Image");
+    GtkWidget *lName = gtk_label_new("Name");
+    GtkWidget *lVersion = gtk_label_new("Version");
+    GtkWidget *lSupported = gtk_label_new("Supported");
+    GtkWidget *lDownloads = gtk_label_new("Total Downloads");
+
+    gtk_box_pack_start(GTK_BOX(topLabels), lImage, true, false, 0);
+    gtk_box_pack_start(GTK_BOX(topLabels), lName, true, false, 0);
+    gtk_box_pack_start(GTK_BOX(topLabels), lVersion, true, false, 0);
+    gtk_box_pack_start(GTK_BOX(topLabels), lSupported, true, false, 0);
+    gtk_box_pack_start(GTK_BOX(topLabels), lDownloads, true, false, 0);
+
+    // Add the topLabels container to the search tab
+    gtk_box_pack_start(GTK_BOX(vbox), topLabels, false, false, 0);
+
     m_ScrolledWindow = gtk_scrolled_window_new(NULL, NULL);
-    gtk_notebook_append_page(GTK_NOTEBOOK(m_TabView), m_ScrolledWindow, gtk_label_new("Search"));
 
     m_SearchContainer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
     gtk_container_add(GTK_CONTAINER(m_ScrolledWindow), m_SearchContainer);
+    gtk_box_pack_start(GTK_BOX(vbox), m_ScrolledWindow, true, true, 0);
+    addSearchInput(vbox);
 }
 
 void GUI::addTabInstalled(){
@@ -87,14 +107,14 @@ void GUI::addTabSettings(){
 void GUI::addSrolledWindow(){
 }
 
-void GUI::addSearch(){
+void GUI::addSearchInput(GtkWidget *container){
     GtkWidget * hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Search: "), false, false, 0);
     GtkWidget *searchEntry = gtk_entry_new();
     // TODO: Bind this signal to the search function that should be in its own backend class
     g_signal_connect(G_OBJECT(searchEntry), "activate", G_CALLBACK(searchEntryActivated), searchEntry);
     gtk_box_pack_start(GTK_BOX(hbox), searchEntry, true, true, 0);
-    gtk_box_pack_end(GTK_BOX(m_SearchContainer), hbox, false, false, 0);
+    gtk_box_pack_end(GTK_BOX(container), hbox, false, false, 0);
 }
 
 void GUI::addAddon(std::string name, std::string version, std::string supported, std::string image, std::string downloads){
@@ -109,12 +129,15 @@ void GUI::addAddon(std::string name, std::string version, std::string supported,
     GtkWidget * lSupported = gtk_label_new(supported.c_str());
     GtkWidget * lDownloads = gtk_label_new(downloads.c_str());
 
+    // Configure components
+    gtk_image_set_pixel_size(GTK_IMAGE(iThumbnail), 1);
+
     // Add too container
-    gtk_box_pack_start(GTK_BOX(hbox), iThumbnail, false, false, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), lName, false, false, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), lVersion, false, false, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), lSupported, false, false, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), lDownloads, false, false, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), iThumbnail, true, true, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), lName, true, true, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), lVersion, true, true, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), lSupported, true, true, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), lDownloads, true, true, 0);
 
     // Add too search tab
     gtk_box_pack_start(GTK_BOX(m_SearchContainer), hbox, false, false, 0);

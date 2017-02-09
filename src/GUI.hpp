@@ -21,7 +21,7 @@ class GUI{
         void addTabInstalled();
         void addTabSettings();
         void addSrolledWindow();
-        void addSearch();
+        void addSearchInput(GtkWidget *container);
     public:
         GUI(int * argc, char * argv[]);
         ~GUI();
