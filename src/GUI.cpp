@@ -6,6 +6,15 @@
 #include <iostream>
 
 extern "C" void searchEntryActivated(GtkWidget *widget, GtkWidget *entry){
+    GList *children, *it;
+
+    children = gtk_container_get_children(GTK_CONTAINER(GUI::m_SearchContainer));
+    for(it = children; it != NULL; it = g_list_next(it)){
+        gtk_widget_destroy(GTK_WIDGET(it->data));
+    }
+    g_list_free(children);
+    gtk_widget_show_all(GUI::m_SearchContainer);
+
     Core c;
     const gchar *entry_text;
     entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
@@ -123,28 +132,32 @@ void GUI::addSearchInput(GtkWidget *container){
 }
 
 void GUI::addAddon(std::string name, std::string version, std::string supported, std::string image, std::string downloads){
-    // Container
-    GtkWidget * hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
+    // Table container with 6 columns and 1 row
+    GtkWidget *grid = gtk_grid_new();
+    gtk_grid_set_row_homogeneous(GTK_GRID(grid), 1);
+    gtk_grid_set_column_homogeneous(GTK_GRID(grid), 1);
 
     // Components
     printf("Trying to load image: %s\n", image.c_str());
-    GtkWidget * iThumbnail = gtk_image_new_from_file(image.c_str());
-    GtkWidget * lName = gtk_label_new(name.c_str());
-    GtkWidget * lVersion = gtk_label_new(version.c_str());
-    GtkWidget * lSupported = gtk_label_new(supported.c_str());
-    GtkWidget * lDownloads = gtk_label_new(downloads.c_str());
+    GtkWidget *iThumbnail = gtk_image_new_from_file(image.c_str());
+    GtkWidget *lName = gtk_label_new(name.c_str());
+    GtkWidget *lVersion = gtk_label_new(version.c_str());
+    GtkWidget *lSupported = gtk_label_new(supported.c_str());
+    GtkWidget *lDownloads = gtk_label_new(downloads.c_str());
+    GtkWidget *bDownload = gtk_button_new_with_label("Download");
 
     // Configure components
     gtk_image_set_pixel_size(GTK_IMAGE(iThumbnail), 1);
 
     // Add too container
-    gtk_box_pack_start(GTK_BOX(hbox), iThumbnail, true, true, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), lName, true, true, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), lVersion, true, true, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), lSupported, true, true, 0);
-    gtk_box_pack_start(GTK_BOX(hbox), lDownloads, true, true, 0);
+    gtk_grid_attach(GTK_GRID(grid), iThumbnail, 0, 1, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), lName, iThumbnail, GTK_POS_RIGHT, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), lVersion, lName, GTK_POS_RIGHT, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), lSupported, lVersion, GTK_POS_RIGHT, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), lDownloads, lSupported, GTK_POS_RIGHT, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), bDownload, lDownloads, GTK_POS_RIGHT, 1, 1);
 
     // Add too search tab
-    gtk_box_pack_start(GTK_BOX(m_SearchContainer), hbox, false, false, 0);
+    gtk_box_pack_start(GTK_BOX(m_SearchContainer), grid, false, false, 0);
     gtk_widget_show_all(m_SearchContainer);
 }

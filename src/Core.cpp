@@ -14,20 +14,22 @@ Core::Core(){
 Core::~Core(){
 }
 
-std::vector<std::string> filesCreated;
-std::vector<Addon> addons;
 
-void downloadHTML(std::string url, unsigned int count){
+void downloadHTML(std::vector<std::string> *list, std::string url, unsigned int count){
     Connection conn;
     std::string filename = "addon" + std::to_string(count) + ".html";
     if(conn.connect(url)){
         if(conn.save_data_to_file(filename)){
-            filesCreated.push_back(filename);
+            list->push_back(filename);
         }
     }
 }
 
 void Core::search(std::string search){
+
+    std::vector<Addon> addons;
+    std::vector<std::string> filesCreated;
+
     std::string website = "https://mods.curse.com/search?game-slug=wow&search=";
     std::transform(search.begin(), search.end(), search.begin(), [](char ch) {
         return ch == ' ' ? '+' : ch;
@@ -53,7 +55,7 @@ void Core::search(std::string search){
     int count = 1;
 
     for(it = begin(result); it != end(result); ++it){
-        threads.push_back(std::thread(downloadHTML, *it, count));
+        threads.push_back(std::thread(downloadHTML, &filesCreated, *it, count));
         count++;
     }
 
