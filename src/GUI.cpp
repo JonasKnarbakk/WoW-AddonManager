@@ -69,6 +69,22 @@ void GUI::addTabSearch(){
     GtkWidget *vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
     gtk_notebook_append_page(GTK_NOTEBOOK(m_TabView), vbox, gtk_label_new("Search"));
 
+    addTopLabels(vbox);
+    addScrollArea(vbox);
+    addSearchInput(vbox);
+}
+
+void GUI::addTabInstalled(){
+    m_InstalledContainer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
+    gtk_notebook_append_page(GTK_NOTEBOOK(m_TabView), m_InstalledContainer, gtk_label_new("Installed"));
+}
+
+void GUI::addTabSettings(){
+    m_SettingsContainer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
+    gtk_notebook_append_page(GTK_NOTEBOOK(m_TabView), m_SettingsContainer, gtk_label_new("Settings"));
+}
+
+void GUI::addTopLabels(GtkWidget *container){
     // Create the top labels for the search tab
     GtkWidget *topLabels = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     GtkWidget *lImage = gtk_label_new("Image");
@@ -84,27 +100,16 @@ void GUI::addTabSearch(){
     gtk_box_pack_start(GTK_BOX(topLabels), lDownloads, true, false, 0);
 
     // Add the topLabels container to the search tab
-    gtk_box_pack_start(GTK_BOX(vbox), topLabels, false, false, 0);
+    gtk_box_pack_start(GTK_BOX(container), topLabels, false, false, 0);
+}
 
+void GUI::addScrollArea(GtkWidget *container){
     m_ScrolledWindow = gtk_scrolled_window_new(NULL, NULL);
 
     m_SearchContainer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
     gtk_container_add(GTK_CONTAINER(m_ScrolledWindow), m_SearchContainer);
-    gtk_box_pack_start(GTK_BOX(vbox), m_ScrolledWindow, true, true, 0);
-    addSearchInput(vbox);
-}
+    gtk_box_pack_start(GTK_BOX(container), m_ScrolledWindow, true, true, 0);
 
-void GUI::addTabInstalled(){
-    m_InstalledContainer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
-    gtk_notebook_append_page(GTK_NOTEBOOK(m_TabView), m_InstalledContainer, gtk_label_new("Installed"));
-}
-
-void GUI::addTabSettings(){
-    m_SettingsContainer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
-    gtk_notebook_append_page(GTK_NOTEBOOK(m_TabView), m_SettingsContainer, gtk_label_new("Settings"));
-}
-
-void GUI::addSrolledWindow(){
 }
 
 void GUI::addSearchInput(GtkWidget *container){

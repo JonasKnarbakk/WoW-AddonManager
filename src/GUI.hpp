@@ -20,7 +20,8 @@ class GUI{
         void addTabSearch();
         void addTabInstalled();
         void addTabSettings();
-        void addSrolledWindow();
+        void addScrollArea(GtkWidget *container);
+        void addTopLabels(GtkWidget *container);
         void addSearchInput(GtkWidget *container);
     public:
         GUI(int * argc, char * argv[]);
