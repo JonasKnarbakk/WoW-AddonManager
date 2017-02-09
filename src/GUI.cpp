@@ -32,6 +32,7 @@ GUI::GUI(int * argc, char * argv[]){
     m_Height = 500;
     setDefaultSize(m_Width, m_Height);
     setResizable(true);
+    gtk_window_maximize(GTK_WINDOW(m_Window));
 
     addTabbedView();
     addTabSearch();
@@ -101,12 +102,14 @@ void GUI::addTopLabels(GtkWidget *container){
     GtkWidget *lVersion = gtk_label_new("Version");
     GtkWidget *lSupported = gtk_label_new("Supported");
     GtkWidget *lDownloads = gtk_label_new("Total Downloads");
+    GtkWidget *lEmpty = gtk_label_new("");
 
     gtk_box_pack_start(GTK_BOX(topLabels), lImage, true, false, 0);
     gtk_box_pack_start(GTK_BOX(topLabels), lName, true, false, 0);
     gtk_box_pack_start(GTK_BOX(topLabels), lVersion, true, false, 0);
     gtk_box_pack_start(GTK_BOX(topLabels), lSupported, true, false, 0);
     gtk_box_pack_start(GTK_BOX(topLabels), lDownloads, true, false, 0);
+    gtk_box_pack_start(GTK_BOX(topLabels), lEmpty, true, false, 0);
 
     // Add the topLabels container to the search tab
     gtk_box_pack_start(GTK_BOX(container), topLabels, false, false, 0);
