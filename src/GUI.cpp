@@ -6,14 +6,15 @@
 #include <iostream>
 
 extern "C" void searchEntryActivated(GtkWidget *widget, GtkWidget *entry){
+    gtk_spinner_start(GTK_SPINNER(GUI::spinner));
     GList *children, *it;
 
-    children = gtk_container_get_children(GTK_CONTAINER(GUI::m_SearchContainer));
+    children = gtk_container_get_children(GTK_CONTAINER(GUI::searchContainer));
     for(it = children; it != NULL; it = g_list_next(it)){
         gtk_widget_destroy(GTK_WIDGET(it->data));
     }
     g_list_free(children);
-    gtk_widget_show_all(GUI::m_SearchContainer);
+    gtk_widget_show_all(GUI::searchContainer);
 
     Core c;
     const gchar *entry_text;
@@ -22,7 +23,8 @@ extern "C" void searchEntryActivated(GtkWidget *widget, GtkWidget *entry){
     c.search(searchText);
 }
 
-GtkWidget * GUI::m_SearchContainer;
+GtkWidget * GUI::searchContainer;
+GtkWidget *GUI::spinner;
 
 GUI::GUI(int * argc, char * argv[]){
     gtk_init(argc, &argv);
@@ -117,9 +119,10 @@ void GUI::addTopLabels(GtkWidget *container){
 
 void GUI::addScrollArea(GtkWidget *container){
     m_ScrolledWindow = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(m_ScrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 
-    m_SearchContainer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
-    gtk_container_add(GTK_CONTAINER(m_ScrolledWindow), m_SearchContainer);
+    searchContainer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 1);
+    gtk_container_add(GTK_CONTAINER(m_ScrolledWindow), searchContainer);
     gtk_box_pack_start(GTK_BOX(container), m_ScrolledWindow, true, true, 0);
 
 }
@@ -128,9 +131,11 @@ void GUI::addSearchInput(GtkWidget *container){
     GtkWidget * hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
     gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new("Search: "), false, false, 0);
     GtkWidget *searchEntry = gtk_entry_new();
+    spinner = gtk_spinner_new();
     // TODO: Bind this signal to the search function that should be in its own backend class
     g_signal_connect(G_OBJECT(searchEntry), "activate", G_CALLBACK(searchEntryActivated), searchEntry);
     gtk_box_pack_start(GTK_BOX(hbox), searchEntry, true, true, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), spinner, false, false, 0);
     gtk_box_pack_end(GTK_BOX(container), hbox, false, false, 0);
 }
 
@@ -161,6 +166,6 @@ void GUI::addAddon(std::string name, std::string version, std::string supported,
     gtk_grid_attach_next_to(GTK_GRID(grid), bDownload, lDownloads, GTK_POS_RIGHT, 1, 1);
 
     // Add too search tab
-    gtk_box_pack_start(GTK_BOX(m_SearchContainer), grid, false, false, 0);
-    gtk_widget_show_all(m_SearchContainer);
+    gtk_box_pack_start(GTK_BOX(searchContainer), grid, false, false, 0);
+    gtk_widget_show_all(searchContainer);
 }

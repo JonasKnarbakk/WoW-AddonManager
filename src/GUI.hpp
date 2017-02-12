@@ -26,7 +26,8 @@ class GUI{
         GUI(int * argc, char * argv[]);
         ~GUI();
 
-        static GtkWidget *m_SearchContainer;
+        static GtkWidget *searchContainer;
+        static GtkWidget *spinner;
         void setTitle(std::string title);
         void setDefaultSize(unsigned int width, unsigned int height);
         void setWidth(unsigned int width);
