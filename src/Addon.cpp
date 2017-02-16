@@ -63,20 +63,23 @@ void Addon::setTotaltDownloads(unsigned int downloads){
     m_TotalDownloads = downloads;
 }
 
-std::ostream &operator <<(std::ostream &output, const Addon &addon){
+std::string Addon::getTotalDownloadsFormat(std::string seperator) const{
     // Format downloads to have commas to make it more readable
-    std::string downloads = std::to_string(addon.getTotalDownloads());
+    std::string downloads = std::to_string(m_TotalDownloads);
     int insertPosition = downloads.length()-3;
     while(insertPosition > 0){
-        downloads.insert(insertPosition, ",");
+        downloads.insert(insertPosition, seperator);
         insertPosition-=3;
     }
-    
+    return downloads;
+}
+
+std::ostream &operator <<(std::ostream &output, const Addon &addon){
     output << "Name: " << addon.getName()
         << "\nVersion: " << addon.getVersion()
         << "\nSupports: " << addon.getSupportedVersion()
         << "\nImage Link: " << addon.getImageLink()
-        << "\nTotal Downloads: " << downloads;
+        << "\nTotal Downloads: " << addon.getTotalDownloadsFormat(",");
 
     return output;
 }

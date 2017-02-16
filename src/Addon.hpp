@@ -32,6 +32,7 @@ class Addon{
         std::string getImageLink() const;
         // Returns the total number of downloads for the addon
         unsigned int getTotalDownloads() const;
+        std::string getTotalDownloadsFormat(std::string seperator) const;
         
         // Set the addon name
         void setName(std::string name);
