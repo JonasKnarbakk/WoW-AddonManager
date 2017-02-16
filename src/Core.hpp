@@ -12,7 +12,8 @@ class Core{
         Core();
         ~Core();
 
-        std::vector<Addon> search(std::string search);
+        static std::vector<Addon> search(std::string search);
+        static void searchGUI(std::string search);
 };
 
 #endif

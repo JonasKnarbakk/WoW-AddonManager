@@ -14,6 +14,6 @@ default: $(SRC_FILES)
 test: $(TST_FILES)
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $^ $(TST_LIB) -o bin/$(NAME) && ./bin/$(NAME)
 run:
-	./bin/$(NAME)
+	./bin/$(NAME) gui
 clean:
 	rm bin/$(NAME)

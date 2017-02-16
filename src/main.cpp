@@ -35,8 +35,7 @@ int main(int argc, char * argv[]){
                     std::string arg = argv[i];
                     searchQuery += arg + " ";
                 }
-                Core c;
-                searchResults = c.search(searchQuery);
+                searchResults = Core::search(searchQuery);
                 std::vector<Addon>::iterator it;
                 std::sort(searchResults.begin(), searchResults.end(), sortByDownloads);
                 for(it = searchResults.begin(); it != searchResults.end(); ++it){
