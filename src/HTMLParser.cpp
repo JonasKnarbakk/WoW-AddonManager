@@ -4,7 +4,9 @@
 
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 #include "HTMLParser.hpp"
+
 
 HTMLParser::HTMLParser(std::string filename){
     m_File.open(filename);
@@ -87,14 +89,16 @@ std::string HTMLParser::getAddonImage(std::string line){
     return image;
 }
 
-std::string HTMLParser::getAddonTotalDownloads(std::string line){
+unsigned int HTMLParser::getAddonTotalDownloads(std::string line){
     std::string downloads;
     std::size_t start = line.find("downloads\">") + 11;
     std::size_t end = line.find(" Total");
     std::size_t wordSize = end - start;
     downloads = line.substr(start, wordSize);
+    downloads.erase(std::remove(downloads.begin(), downloads.end(), ','), downloads.end());
+    unsigned int count = std::stoi(downloads);
 
-    return downloads;
+    return count;
 }
 
 std::vector<std::string> HTMLParser::getAddonLinks() const{

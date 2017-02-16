@@ -25,7 +25,7 @@ void downloadHTML(std::vector<std::string> *list, std::string url, unsigned int 
     }
 }
 
-void Core::search(std::string search){
+std::vector<Addon> Core::search(std::string search){
 
     std::vector<Addon> addons;
     std::vector<std::string> filesCreated;
@@ -71,21 +71,23 @@ void Core::search(std::string search){
         remove(filename.c_str());
     }
 
-    std::vector<Addon>::iterator ait;
-    // Print search result with details
-    int imageCount = 1;
-    for(ait = begin(addons); ait != end(addons); ++ait){
-        Connection conn;
-        if(conn.connect(ait->getImageLink())){
-            conn.save_data_to_file("thumbnail" + std::to_string(imageCount));
-        }
-        std::string imagePath = "thumbnail" + std::to_string(imageCount);
-        GUI::addAddon(ait->getName(), ait->getVersion(), ait->getSupportedVersion(), imagePath, ait->getTotalDownloads());
-        imageCount++;
-    }
+    // std::vector<Addon>::iterator ait;
+    // // Print search result with details
+    // int imageCount = 1;
+    // for(ait = begin(addons); ait != end(addons); ++ait){
+        // Connection conn;
+        // if(conn.connect(ait->getImageLink())){
+            // conn.save_data_to_file("thumbnail" + std::to_string(imageCount));
+        // }
+        // std::string imagePath = "thumbnail" + std::to_string(imageCount);
+        // GUI::addAddon(ait->getName(), ait->getVersion(), ait->getSupportedVersion(), imagePath, ait->getTotalDownloads());
+        // imageCount++;
+    // }
 
     for(int i = 1; i <= 10; i++){
         std::string filename = "thumbnail" + std::to_string(i);
         remove(filename.c_str());
     }
+
+    return addons;
 }

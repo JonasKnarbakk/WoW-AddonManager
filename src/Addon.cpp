@@ -9,10 +9,10 @@ Addon::Addon(){
     m_Version = "";
     m_Supports = "";
     m_Image = "";
-    m_TotalDownloads = "";
+    m_TotalDownloads = 0;
 }
 
-Addon::Addon(std::string name, std::string version, std::string supports, std::string image, std::string downloads){
+Addon::Addon(std::string name, std::string version, std::string supports, std::string image, unsigned int downloads){
     m_Name = name;
     m_Version = version;
     m_Supports = supports;
@@ -39,7 +39,7 @@ std::string Addon::getImageLink() const{
     return m_Image;
 }
 
-std::string Addon::getTotalDownloads() const{
+unsigned int Addon::getTotalDownloads() const{
     return m_TotalDownloads;
 }
 
@@ -59,15 +59,28 @@ void Addon::setImageLink(std::string url){
     m_Image = url;
 }
 
-void Addon::setTotaltDownloads(std::string downloads){
+void Addon::setTotaltDownloads(unsigned int downloads){
     m_TotalDownloads = downloads;
 }
 
 std::ostream &operator <<(std::ostream &output, const Addon &addon){
+    // Format downloads to have commas to make it more readable
+    std::string downloads = std::to_string(addon.getTotalDownloads());
+    int insertPosition = downloads.length()-3;
+    while(insertPosition > 0){
+        downloads.insert(insertPosition, ",");
+        insertPosition-=3;
+    }
+    
     output << "Name: " << addon.getName()
         << "\nVersion: " << addon.getVersion()
         << "\nSupports: " << addon.getSupportedVersion()
         << "\nImage Link: " << addon.getImageLink()
-        << "\nTotal Downloads: " << addon.getTotalDownloads();
+        << "\nTotal Downloads: " << downloads;
+
     return output;
+}
+
+bool operator <(const Addon &a1, const Addon &a2){
+    return a1.getTotalDownloads() < a2.getTotalDownloads();
 }

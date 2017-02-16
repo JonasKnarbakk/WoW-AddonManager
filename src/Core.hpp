@@ -2,7 +2,9 @@
 #define CORE_HPP
 
 #include <string>
+#include <vector>
 #include "GUI.hpp"
+#include "Addon.hpp"
 
 class Core{
     private:
@@ -10,7 +12,7 @@ class Core{
         Core();
         ~Core();
 
-        void search(std::string search);
+        std::vector<Addon> search(std::string search);
 };
 
 #endif
