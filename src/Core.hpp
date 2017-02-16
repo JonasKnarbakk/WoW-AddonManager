@@ -14,6 +14,8 @@ class Core{
 
         static std::vector<Addon> search(std::string search);
         static void searchGUI(std::string search);
+        static bool sortByNames(const Addon &a1, const Addon &a2);
+        static bool sortByDownloads(const Addon &a1, const Addon &a2);
 };
 
 #endif

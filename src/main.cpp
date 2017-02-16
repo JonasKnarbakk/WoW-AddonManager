@@ -11,13 +11,7 @@
 #include "Core.hpp"
 #include <algorithm>
 
-bool sortByNames(const Addon &a1, const Addon &a2){
-    return a1.getName() < a2.getName();
-}
 
-bool sortByDownloads(const Addon &a1, const Addon &a2){
-    return a1.getTotalDownloads() > a2.getTotalDownloads();
-}
 
 
 int main(int argc, char * argv[]){
@@ -37,7 +31,7 @@ int main(int argc, char * argv[]){
                 }
                 searchResults = Core::search(searchQuery);
                 std::vector<Addon>::iterator it;
-                std::sort(searchResults.begin(), searchResults.end(), sortByDownloads);
+                std::sort(searchResults.begin(), searchResults.end(), Core::sortByDownloads);
                 for(it = searchResults.begin(); it != searchResults.end(); ++it){
                     std::cout << *it << "\n" << std::endl;
                 }

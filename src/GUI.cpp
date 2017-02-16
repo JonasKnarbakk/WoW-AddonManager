@@ -7,7 +7,6 @@
 #include <thread>
 
 extern "C" void searchEntryActivated(GtkWidget *widget, GtkWidget *entry){
-    gtk_spinner_start(GTK_SPINNER(GUI::spinner));
     GList *children, *it;
 
     children = gtk_container_get_children(GTK_CONTAINER(GUI::searchContainer));
@@ -15,7 +14,7 @@ extern "C" void searchEntryActivated(GtkWidget *widget, GtkWidget *entry){
         gtk_widget_destroy(GTK_WIDGET(it->data));
     }
     g_list_free(children);
-    gtk_widget_show_all(GUI::searchContainer);
+    // gtk_widget_show_all(GUI::searchContainer);
 
     const gchar *entry_text;
     entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
@@ -168,4 +167,12 @@ void GUI::addAddon(std::string name, std::string version, std::string supported,
     // Add too search tab
     gtk_box_pack_start(GTK_BOX(searchContainer), grid, false, false, 0);
     gtk_widget_show_all(searchContainer);
+}
+
+void GUI::working(bool status){
+    if(status){
+        gtk_spinner_start(GTK_SPINNER(GUI::spinner));
+    } else {
+        gtk_spinner_stop(GTK_SPINNER(GUI::spinner));
+    }
 }

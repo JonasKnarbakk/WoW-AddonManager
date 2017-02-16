@@ -33,6 +33,7 @@ class GUI{
         void setWidth(unsigned int width);
         void setHeigth(unsigned int heigth);
         static void addAddon(std::string name, std::string version, std::string supported, std::string image, std::string downloads);
+        static void working(bool status);
 };
 
 #endif
