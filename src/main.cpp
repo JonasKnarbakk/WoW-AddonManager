@@ -11,12 +11,12 @@
 #include "Core.hpp"
 #include <algorithm>
 
-
-
+void checkSettings();
 
 int main(int argc, char * argv[]){
     
     if(argc > 0){
+        checkSettings();
         std::string arg = argv[1];
         if(arg.compare("gui") == 0){
             GUI app(&argc, argv);    
@@ -48,4 +48,23 @@ int main(int argc, char * argv[]){
     }
 
     return 0;
+}
+
+void checkSettings(){
+    FILE *fileptr = fopen("settings.txt", "r");
+
+    if(fileptr){
+        std::string line = "";
+        char c;
+        while((c = fgetc(fileptr)) != EOF){
+            if(c == '\n'){
+                if(line.find("PATH=") != std::string::npos){
+                    Core::setInstallPath(line.substr(5));
+                }
+                line = "";
+            } else {
+                line += c;
+            }
+        }
+    }
 }
