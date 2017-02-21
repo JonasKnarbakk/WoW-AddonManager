@@ -12,12 +12,18 @@ Connection::~Connection(){
 }
 
 bool Connection::connect(std::string url){
+    
+    // Repace all spaces with %20 so the connection request doesn't fail
+    for(std::size_t pos = url.find(" "); pos != std::string::npos; pos = url.find(" ")){
+        url.replace(pos, 1, "%20");
+    }
 
     curl = curl_easy_init();
 
     if(curl){
 
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
         // tell libcurl to follow redirection
         curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 
@@ -27,7 +33,9 @@ bool Connection::connect(std::string url){
 }
 
 bool Connection::save_data_to_file(std::string filename){
+
     CURLcode res;
+    printf("Attemptin to create file %s\n", filename.c_str());
     FILE *fileptr = fopen(filename.c_str(), "w");
 
     if(fileptr){

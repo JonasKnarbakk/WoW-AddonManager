@@ -21,6 +21,7 @@ class Core{
         static void downloadHTML(std::vector<std::string> *list, std::string url, unsigned int count);
         static std::vector<Addon> search(std::string search);
         static std::vector<Addon> list();
+        static void install(std::string addon);
         static bool sortByNames(const Addon &a1, const Addon &a2);
         static bool sortByDownloads(const Addon &a1, const Addon &a2);
 

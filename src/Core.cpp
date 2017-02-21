@@ -23,7 +23,7 @@ void Core::setInstallPath(std::string path){
     FILE * fileptr = fopen("settings.txt", "w");
     
     if(fileptr){
-        std::string setting = "PATH=" + Core::m_InstallPath;
+        std::string setting = "PATH=" + Core::m_InstallPath + "\n";
         fputs(setting.c_str(), fileptr);
         fclose(fileptr);
     } else {
@@ -44,6 +44,7 @@ void Core::checkSettings(){
         while((c = fgetc(fileptr)) != EOF){
             if(c == '\n'){
                 if(line.find("PATH=") != std::string::npos){
+                    printf("Setting path to: %s\n", line.substr(5).c_str());
                     Core::setInstallPath(line.substr(5));
                 }
                 line = "";
@@ -51,6 +52,9 @@ void Core::checkSettings(){
                 line += c;
             }
         }
+        fclose(fileptr);
+    } else {
+        printf("Faile to read file %s\n", "settings.txt");
     }
 }
 
@@ -127,6 +131,27 @@ std::vector<Addon> Core::list(){
     }
     closedir(dirptr);
     return list;
+}
+
+void Core::install(std::string addon){
+    std::string downloadLink = "https://mods.curse.com/addons/wow/" + addon + "/download";
+    printf("download link: %s\n", downloadLink.c_str());
+    Connection c;
+    std::string filename = addon + ".html";
+    if(c.connect(downloadLink)){
+        c.save_data_to_file(filename);
+    } else {
+        printf("Failed to connect to %s\n", downloadLink.c_str());
+    }
+    HTMLParser p(addon + ".html");
+    downloadLink = p.getDownloadLink();
+    printf("download link: %s\n", downloadLink.c_str());
+    if(c.connect(downloadLink)){
+        c.save_data_to_file(Core::m_InstallPath + addon + ".zip");
+    } else {
+        printf("Failed to connect to: %s\n", downloadLink.c_str());
+    }
+    remove(filename.c_str());
 }
 
 void Core::searchGUI(std::string searchQuery){

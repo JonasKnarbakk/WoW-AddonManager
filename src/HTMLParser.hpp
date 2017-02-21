@@ -14,6 +14,7 @@ class HTMLParser{
 
         bool checkForContent(std::string line, std::string content);
         std::string getAddonLink(std::string line);
+        std::string getAttribute(std::string line, std::string attribute);
         std::string getAddonName(std::string line);
         std::string getAddonSupports(std::string line);
         std::string getAddonVersion(std::string line);
@@ -26,6 +27,7 @@ class HTMLParser{
         void init();
         void setFile(std::string file);
         std::vector<std::string> getAddonLinks() const;
+        std::string getDownloadLink();
         Addon getAddon();
 };
 

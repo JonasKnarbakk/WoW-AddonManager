@@ -49,6 +49,15 @@ std::string HTMLParser::getAddonLink(std::string line){
     return link;
 }
 
+std::string HTMLParser::getAttribute(std::string line, std::string attribute){
+    std::string data;
+    std::size_t start = line.find(attribute) + attribute.size() + 2;
+    data = line.substr(start);
+    std::size_t end = data.find("\"");
+    // std::size_t wordSize = end - start;
+    return data.substr(0, end);
+}
+
 std::string HTMLParser::getAddonName(std::string line){
     std::string name;
     std::size_t start = line.find("<H2 >") + 5;
@@ -118,6 +127,7 @@ Addon HTMLParser::getAddon(){
             if(currentLine.find("primary-content") != std::string::npos) done = true;
             if(checkForContent(currentLine, "<H2 >")){
                 addon.setName(getAddonName(currentLine));
+                addon.setDownloadLink(getAddonName(currentLine) + "/download");
             } else if(checkForContent(currentLine, "Supports:")){
                 addon.setSupportedVersion(getAddonSupports(currentLine));
             } else if(checkForContent(currentLine, "File:")){
@@ -135,4 +145,21 @@ Addon HTMLParser::getAddon(){
 
 void HTMLParser::setFile(std::string filename){
     m_File.open(filename);
+}
+
+std::string HTMLParser::getDownloadLink(){
+    std::string currentLine;
+    bool parse = false;
+    bool done = false;
+
+    while(std::getline(m_File, currentLine)){
+        if(!parse && !done){
+            if(currentLine.find("countdown") != std::string::npos) parse = true;
+        } else if(parse && !done){
+            if(checkForContent(currentLine, "download-link")){
+                return getAttribute(currentLine, "data-href");
+            } 
+        }
+    }
+    return "";
 }

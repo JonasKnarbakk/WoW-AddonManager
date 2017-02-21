@@ -41,6 +41,17 @@ int main(int argc, char * argv[]){
                     Core::setInstallPath(path);
                     std::cout << Core::getInstallPath() << std::endl;
                 }
+            } else if (arg1.compare("install") == 0){
+                std::cout << Core::getInstallPath() << std::endl;
+                std::string addon;
+                for(int i = 2; i < argc; i++){
+                    std::string arg = argv[i];
+                    addon += arg;
+                    if(i < argc - 1){
+                        addon += "-";
+                    }
+                }
+                Core::install(addon);
             }
         }
     }

@@ -10,6 +10,7 @@ class Addon{
         std::string m_Version;
         std::string m_Supports;
         std::string m_Image;
+        std::string m_DownloadLink;
         unsigned int m_TotalDownloads;
     public:
         // Default constructor
@@ -19,6 +20,7 @@ class Addon{
                 std::string version = "Not set",
                 std::string supports = "Not set",
                 std::string image = "Not set",
+                std::string downloadLink = "Not set",
                 unsigned int downloads = 0);
         ~Addon();
 
@@ -30,6 +32,8 @@ class Addon{
         std::string getSupportedVersion() const;
         // Returns the link to the addons display image
         std::string getImageLink() const;
+        // Return the link to download the addons zip file
+        std::string getDownloadLink() const;
         // Returns the total number of downloads for the addon
         unsigned int getTotalDownloads() const;
         std::string getTotalDownloadsFormat(std::string seperator) const;
@@ -42,6 +46,8 @@ class Addon{
         void setSupportedVersion(std::string supported);
         // Set the link for the image that showcase the addon
         void setImageLink(std::string url);
+        // Set the link for the zip file download
+        void setDownloadLink(std::string url);
         // Set the number the addon has for total downloads
         void setTotaltDownloads(unsigned int downloads);
 
