@@ -35,6 +35,14 @@ int main(int argc, char * argv[]){
                 for(it = searchResults.begin(); it != searchResults.end(); ++it){
                     std::cout << *it << "\n" << std::endl;
                 }
+            } else if (arg1.compare("list") == 0){
+                Core::list();
+            } else if (arg1.compare("set-path") == 0){
+                if(argc >= 2){
+                    std::string path = argv[2];
+                    Core::setInstallPath(path);
+                    std::cout << Core::getInstallPath() << std::endl;
+                }
             }
         }
     }

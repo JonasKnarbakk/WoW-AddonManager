@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <vector>
 #include <thread>
+#include <dirent.h>
 #include "Connection.h"
 #include "HTMLParser.hpp"
 
@@ -14,8 +15,27 @@ Core::Core(){
 Core::~Core(){
 }
 
+std::string Core::m_InstallPath;
 
-void downloadHTML(std::vector<std::string> *list, std::string url, unsigned int count){
+void Core::setInstallPath(std::string path){
+    Core::m_InstallPath = path;
+
+    FILE * fileptr = fopen("settings.txt", "w");
+    
+    if(fileptr){
+        std::string setting = "PATH=" + Core::m_InstallPath;
+        fputs(setting.c_str(), fileptr);
+        fclose(fileptr);
+    } else {
+        printf("Failed to write to file %s\n", "settings.txt");
+    }
+}
+
+std::string Core::getInstallPath(){
+    return Core::m_InstallPath;
+}
+
+void Core::downloadHTML(std::vector<std::string> *list, std::string url, unsigned int count){
     Connection conn;
     std::string filename = "addon" + std::to_string(count) + ".html";
     if(conn.connect(url)){
@@ -72,6 +92,22 @@ std::vector<Addon> Core::search(std::string search){
     }
 
     return addons;
+}
+
+std::vector<Addon> Core::list(){
+    std::vector<Addon> list;
+    DIR *dirptr = opendir(Core::m_InstallPath.c_str());
+    dirent *dptr;
+
+    if(dirptr){
+        while((dptr = readdir(dirptr)) != nullptr){
+            std::cout << dptr << std::endl; 
+        }
+    } else {
+        printf("Could not open directory: %s\n", Core::m_InstallPath.c_str());
+    }
+    closedir(dirptr);
+    return list;
 }
 
 void Core::searchGUI(std::string searchQuery){
