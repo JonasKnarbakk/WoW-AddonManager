@@ -41,7 +41,7 @@ void parsing_test(){
         } else {
             printRed("FAILED to parse addon name!");
         }
-        if(recount.getVersion() == "v7.1.5a release" ){
+        if(recount.getVersion() == "v7.1.5c release" ){
             printGreen("Parsed addon version successfully");
         } else {
             printRed("FAILED to parse addon version!\nCheck if it has changed before assuming the parser to be broken.");
@@ -56,7 +56,7 @@ void parsing_test(){
         } else {
             printRed("FAILED to parse addon image link!");
         }
-        if(recount.getTotalDownloads().find("94,") == 0){
+        if(recount.getTotalDownloads() > 0){
             printGreen("Parsed addon total downalods successfully!");
         } else {
             printRed("FAILED to parse addon total downloads!");
@@ -71,7 +71,7 @@ int main(){
     connection_test("http://www.vg.no/");
     connection_test("https://mods.curse.com/addons/wow");
     download_test("http://addons.curse.cursecdn.com/files/2366/614/DBM-Core-7.1.7.zip");
-    download_test("http://addons.curse.cursecdn.com/files/2364/379/Recount-v7.1.0h release.zip");
+    download_test("http://addons.curse.cursecdn.com/files/2364/379/Recount-v7.1.5c release.zip");
     parsing_test();
 }
 
