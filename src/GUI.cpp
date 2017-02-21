@@ -22,7 +22,7 @@ extern "C" void searchEntryActivated(GtkWidget *widget, GtkWidget *entry){
     std::thread(Core::searchGUI, searchText).detach();
 }
 
-GtkWidget * GUI::searchContainer;
+GtkWidget *GUI::searchContainer;
 GtkWidget *GUI::spinner;
 
 GUI::GUI(int * argc, char * argv[]){
