@@ -152,6 +152,8 @@ void GUI::addAddon(std::string name, std::string version, std::string supported,
     GtkWidget *lSupported = gtk_label_new(supported.c_str());
     GtkWidget *lDownloads = gtk_label_new(downloads.c_str());
     GtkWidget *bDownload = gtk_button_new_with_label("Download");
+    GtkWidget *bBox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+    gtk_container_add(GTK_CONTAINER(bBox), bDownload);
 
     // Configure components
     gtk_image_set_pixel_size(GTK_IMAGE(iThumbnail), 1);
@@ -162,7 +164,7 @@ void GUI::addAddon(std::string name, std::string version, std::string supported,
     gtk_grid_attach_next_to(GTK_GRID(grid), lVersion, lName, GTK_POS_RIGHT, 1, 1);
     gtk_grid_attach_next_to(GTK_GRID(grid), lSupported, lVersion, GTK_POS_RIGHT, 1, 1);
     gtk_grid_attach_next_to(GTK_GRID(grid), lDownloads, lSupported, GTK_POS_RIGHT, 1, 1);
-    gtk_grid_attach_next_to(GTK_GRID(grid), bDownload, lDownloads, GTK_POS_RIGHT, 1, 1);
+    gtk_grid_attach_next_to(GTK_GRID(grid), bBox, lDownloads, GTK_POS_RIGHT, 1, 1);
 
     // Add too search tab
     gtk_box_pack_start(GTK_BOX(searchContainer), grid, false, false, 0);
