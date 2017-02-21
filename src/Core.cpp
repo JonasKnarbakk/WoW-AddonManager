@@ -35,6 +35,25 @@ std::string Core::getInstallPath(){
     return Core::m_InstallPath;
 }
 
+void Core::checkSettings(){
+    FILE *fileptr = fopen("settings.txt", "r");
+
+    if(fileptr){
+        std::string line = "";
+        char c;
+        while((c = fgetc(fileptr)) != EOF){
+            if(c == '\n'){
+                if(line.find("PATH=") != std::string::npos){
+                    Core::setInstallPath(line.substr(5));
+                }
+                line = "";
+            } else {
+                line += c;
+            }
+        }
+    }
+}
+
 void Core::downloadHTML(std::vector<std::string> *list, std::string url, unsigned int count){
     Connection conn;
     std::string filename = "addon" + std::to_string(count) + ".html";

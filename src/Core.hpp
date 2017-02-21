@@ -17,6 +17,7 @@ class Core{
         static void setInstallPath(std::string path);
         static std::string getInstallPath();
 
+        static void checkSettings();
         static void downloadHTML(std::vector<std::string> *list, std::string url, unsigned int count);
         static std::vector<Addon> search(std::string search);
         static std::vector<Addon> list();
