@@ -3,3 +3,5 @@ main
 *.o
 bin/*
 obj/*
+settings.txt
+addons/
