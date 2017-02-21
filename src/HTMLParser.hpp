@@ -18,7 +18,6 @@ class HTMLParser{
         std::string getAddonName(std::string line);
         std::string getAddonSupports(std::string line);
         std::string getAddonVersion(std::string line);
-        std::string getAddonImage(std::string line);
         unsigned int getAddonTotalDownloads(std::string line);
     public:
         HTMLParser(std::string filename);

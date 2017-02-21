@@ -88,16 +88,6 @@ std::string HTMLParser::getAddonVersion(std::string line){
     return version;
 }
 
-std::string HTMLParser::getAddonImage(std::string line){
-    std::string image;
-    std::size_t start = line.find("src=\"") + 5;
-    std::size_t end = line.find_last_of(".jpeg") + 1;
-    std::size_t wordSize = end - start;
-    image = line.substr(start, wordSize);
-
-    return image;
-}
-
 unsigned int HTMLParser::getAddonTotalDownloads(std::string line){
     std::string downloads;
     std::size_t start = line.find("downloads\">") + 11;
@@ -133,7 +123,7 @@ Addon HTMLParser::getAddon(){
             } else if(checkForContent(currentLine, "File:")){
                 addon.setVersion(getAddonVersion(currentLine));
             } else if(checkForContent(currentLine, "primary-project-attachment")){
-                addon.setImageLink(getAddonImage(currentLine));
+                addon.setImageLink(getAttribute(currentLine, "src"));
             } else if(checkForContent(currentLine, "Total Downloads")){
                 addon.setTotaltDownloads(getAddonTotalDownloads(currentLine));
             }
