@@ -32,7 +32,7 @@ void download_test(std::string url){
 
 void parsing_test(){
     Connection con;
-    if(con.connect("https://mods.curse.com/addons/wow/recount")){
+    if(con.connect("https://www.curseforge.com/wow/addons/recount")){
         con.save_data_to_file("parsingTest.html");
         HTMLParser p("parsingTest.html");
         Addon recount = p.getAddon();
@@ -40,36 +40,41 @@ void parsing_test(){
             printGreen("Parsed addon name successfully!");
         } else {
             printRed("FAILED to parse addon name!");
+            printRed("Returned: " + recount.getName());
         }
-        if(recount.getVersion() == "v7.1.5c release" ){
+        if(recount.getVersion() == "1" ){
             printGreen("Parsed addon version successfully");
         } else {
             printRed("FAILED to parse addon version!\nCheck if it has changed before assuming the parser to be broken.");
+            printRed("Returned: " + recount.getVersion());
         }
-        if(recount.getSupportedVersion() == "7.1.5"){
+        if(recount.getSupportedVersion() == "7.3.5"){
             printGreen("Parsed addon supported version successfully!");
         } else {
             printRed("FAILED to parse addon supported version!\nCheck if it has changed before assuming the parser to be broken.");
+            printRed("Returned: " + recount.getSupportedVersion());
         }
         if(recount.getImageLink().find("https") == 0){
             printGreen("Parsed addon image link successfully!");
         } else {
             printRed("FAILED to parse addon image link!");
+            printRed("Returned: " + recount.getImageLink());
         }
         if(recount.getTotalDownloads() > 0){
             printGreen("Parsed addon total downalods successfully!");
         } else {
             printRed("FAILED to parse addon total downloads!");
+            printRed("Returned: " + recount.getTotalDownloads());
         }
-        remove("parsingTest.html");
+        // remove("parsingTest.html");
     } else {
-        printRed("Parsing Test: Failed to connect to https://mods.curse.com/addons/wow/recount");
+        printRed("Parsing Test: Failed to connect to https://www.curseforge.com/wow/addons/recount");
     }
 }
 
 int main(){
     connection_test("http://www.vg.no/");
-    connection_test("https://mods.curse.com/addons/wow");
+    connection_test("https://www.curseforge.com/wow/addons/");
     download_test("http://addons.curse.cursecdn.com/files/2366/614/DBM-Core-7.1.7.zip");
     download_test("http://addons.curse.cursecdn.com/files/2364/379/Recount-v7.1.5c release.zip");
     parsing_test();
