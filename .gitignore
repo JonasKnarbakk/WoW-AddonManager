@@ -6,3 +6,5 @@ obj/*
 settings.txt
 addons/
 build/
+.idea/
+cmake-build-debug/
