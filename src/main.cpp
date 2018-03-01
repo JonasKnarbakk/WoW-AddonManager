@@ -21,7 +21,7 @@ int main(int argc, char * argv[]){
 		<< PROJECT_VERSION_MINOR << "." << PROJECT_VERSION_HOTFIX << std::endl;
 	std::cout << project_string.str();
 
-	if(argc > 0){
+	if(argc > 1){
 		Core::checkSettings();
 		std::string arg = argv[1];
 		if(arg.compare("gui") == 0){
