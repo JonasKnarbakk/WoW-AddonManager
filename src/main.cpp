@@ -12,6 +12,8 @@
 #include "Core.hpp"
 #include <algorithm>
 #include "WoW-Addon-Manager.hpp"
+#include "mainwindow.h"
+#include <QApplication>
 
 int main(int argc, char * argv[]){
 
@@ -26,6 +28,11 @@ int main(int argc, char * argv[]){
 		std::string arg = argv[1];
 		if(arg.compare("gui") == 0){
 			GUI app(&argc, argv);
+		} else if (arg.compare("qt") == 0) {
+			QApplication app(argc, argv);
+			MainWindow mainWindow;
+			mainWindow.show();
+			return app.exec();
 		} else {
 			std::string arg1 = argv[1];
 			if(arg1.compare("search") == 0){
