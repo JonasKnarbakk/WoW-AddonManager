@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include "GUI.hpp"
 #include "Addon.hpp"
 
 class Core{
@@ -24,8 +23,6 @@ class Core{
         static void install(std::string addon);
         static bool sortByNames(const Addon &a1, const Addon &a2);
         static bool sortByDownloads(const Addon &a1, const Addon &a2);
-
-        static void searchGUI(std::string search);
 };
 
 #endif

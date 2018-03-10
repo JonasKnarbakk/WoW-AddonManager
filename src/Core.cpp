@@ -154,31 +154,6 @@ void Core::install(std::string addon){
 	remove(filename.c_str());
 }
 
-void Core::searchGUI(std::string searchQuery){
-	GUI::working(true);
-	std::vector<Addon> addons = Core::search(searchQuery);
-	std::sort(addons.begin(), addons.end(), Core::sortByDownloads);
-	std::vector<Addon>::iterator it;
-	// Print search result with details
-	int imageCount = 1;
-	for(it = begin(addons); it != end(addons); ++it){
-		Connection conn;
-		if(conn.connect(it->getImageLink())){
-			conn.save_data_to_file("thumbnail" + std::to_string(imageCount));
-		}
-		std::string imagePath = "thumbnail" + std::to_string(imageCount);
-		GUI::addAddon(it->getName(), it->getVersion(), it->getSupportedVersion(), imagePath, it->getTotalDownloadsFormat(","));
-		imageCount++;
-	}
-
-	for(int i = 1; i <= 10; i++){
-		std::string filename = "thumbnail" + std::to_string(i);
-		remove(filename.c_str());
-	}
-
-	GUI::working(false);
-}
-
 bool Core::sortByNames(const Addon &a1, const Addon &a2){
 	return a1.getName() < a2.getName();
 }
