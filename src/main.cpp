@@ -27,9 +27,9 @@ int main(int argc, char * argv[]){
 		<< PROJECT_VERSION_MINOR << "." << PROJECT_VERSION_HOTFIX << std::endl;
 	std::cout << project_string.str();
 
-	Curse curse;
 	// curse.updateDatabase();
 	// curse.search("RECOUNT");
+	Core::checkSettings();
 
 	if(argc == 1) {
 		// Luanch in graphical mode

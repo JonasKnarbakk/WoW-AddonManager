@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	ui->tableView->setModel(model);
 
+	ui->installPathField->setText(QString("%0").arg(Core::getInstallPath().c_str()));
+
 	QHeaderView *verticalHeader = ui->tableView->verticalHeader();
 	verticalHeader->setSectionResizeMode(QHeaderView::Fixed);
 	verticalHeader->setDefaultSectionSize(100);
@@ -60,7 +62,7 @@ void MainWindow::on_installPathButton_released() {
 	QDir defaultPath = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
 			"/home", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 	ui->installPathField->setText(defaultPath.absolutePath());
-	std::cout << defaultPath.absolutePath().toUtf8().constData() << std::endl;
+	Core::setInstallPath(defaultPath.absolutePath().toUtf8().constData());
 }
 
 void MainWindow::downloadAddon() {
