@@ -15,6 +15,9 @@
 #include "WoW-Addon-Manager.hpp"
 #include "mainwindow.h"
 #include <QApplication>
+#include <chrono>
+#include <thread>
+#include <addonsources/curse.hpp>
 
 int main(int argc, char * argv[]){
 
@@ -23,6 +26,9 @@ int main(int argc, char * argv[]){
 	project_string << PROJECT_NAME << " Version: " << PROJECT_VERSION_MAJOR << "."
 		<< PROJECT_VERSION_MINOR << "." << PROJECT_VERSION_HOTFIX << std::endl;
 	std::cout << project_string.str();
+
+	Curse curse;
+	curse.updateDatabase();
 
 	if(argc == 1) {
 		// Luanch in graphical mode
@@ -67,19 +73,5 @@ int main(int argc, char * argv[]){
 			Core::install(addon);
 		}
 	}
-	// if(argc > 1){
-		// Core::checkSettings();
-		// std::string arg = argv[1];
-		// if(arg.compare("gui") == 0){
-			// GUI app(&argc, argv);
-		// } else if (arg.compare("qt") == 0) {
-			// QApplication app(argc, argv);
-			// MainWindow mainWindow;
-			// mainWindow.show();
-			// return app.exec();
-		// } else {
-		// }
-	// }
-
-	// return 0;
+	return 0;
 }
