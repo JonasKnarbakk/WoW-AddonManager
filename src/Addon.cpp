@@ -4,14 +4,14 @@
 
 #include "Addon.hpp"
 
-Addon::Addon(){
-    m_Name = "";
-    m_Version = "";
-    m_Supports = "";
-    m_Image = "";
-    m_DownloadLink = "";
-    m_TotalDownloads = 0;
-}
+// Addon::Addon(){
+    // m_Name = "";
+    // m_Version = "";
+    // m_Supports = "";
+    // m_Image = "";
+    // m_DownloadLink = "";
+    // m_TotalDownloads = 0;
+// }
 
 Addon::Addon(std::string name, std::string version, std::string supports, std::string image, std::string downloadLink, unsigned int downloads){
     m_Name = name;

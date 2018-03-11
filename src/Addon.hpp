@@ -14,7 +14,7 @@ class Addon{
         unsigned int m_TotalDownloads;
     public:
         // Default constructor
-        Addon();
+        // Addon();
         // Constructor with defaults
         Addon(std::string name = "Not set",
                 std::string version = "Not set",

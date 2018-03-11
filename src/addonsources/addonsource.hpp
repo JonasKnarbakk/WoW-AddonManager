@@ -4,11 +4,10 @@
 #include <vector>
 #include <Addon.hpp>
 
-class AddonSource;
-
 class AddonSource {
 	public:
-		virtual std::vector<Addon> search() = 0;
+		virtual std::vector<Addon> search(std::string name) = 0;
+		virtual bool updateDatabase() = 0;
 };
 
 #endif

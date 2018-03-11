@@ -28,7 +28,8 @@ int main(int argc, char * argv[]){
 	std::cout << project_string.str();
 
 	Curse curse;
-	curse.updateDatabase();
+	// curse.updateDatabase();
+	// curse.search("RECOUNT");
 
 	if(argc == 1) {
 		// Luanch in graphical mode

@@ -3,17 +3,22 @@
 
 #include <vector>
 #include <Addon.hpp>
+#include <nlohmann/json.hpp>
 #include <addonsources/addonsource.hpp>
 
 class Curse;
 
-class Curse : public AddonSource {
+class Curse : AddonSource {
 	public:
-		std::vector<Addon> search();
-		bool updateDatabase();
+		Curse();
+		~Curse();
+		virtual std::vector<Addon> search(std::string name) override;
+		bool updateDatabase() override;
 	private:
 		void downloadArchive();
 		void decompressArchive();
+
+		nlohmann::json jsonData;
 };
 
 #endif

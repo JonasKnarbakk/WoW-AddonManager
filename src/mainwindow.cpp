@@ -8,22 +8,27 @@
 #include "Core.hpp"
 #include "Addon.hpp"
 #include <iostream>
+#include <Connection.h>
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+	QMainWindow(parent),
+	ui(new Ui::MainWindow)
 {
+	curse.updateDatabase();
 	ui->setupUi(this);
 	// Create model
-	model = new QStandardItemModel(3, 6);
+	model = new QStandardItemModel(0, 0);
 
 	QStringList columnNames;
-	columnNames << "Image" << "Name" << "Version" << "Supports" << "Downloads" << "Download Button";
+	columnNames << "Image" << "Name" << "Version" << "Supports" << "Downloads" << " ";
 	model->setHorizontalHeaderLabels(columnNames);
 
 	ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	ui->tableView->setModel(model);
 
+	QHeaderView *verticalHeader = ui->tableView->verticalHeader();
+	verticalHeader->setSectionResizeMode(QHeaderView::Fixed);
+	verticalHeader->setDefaultSectionSize(100);
 	// QSortFilterProxyModel proxyModel;
 	// proxyModel.setSourceModel(model);
 	// ui->tableView->sortByColumn(4, Qt::DescendingOrder);
@@ -34,17 +39,32 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
-void MainWindow::on_searchButton_clicked() {
+void MainWindow::on_searchButton_released() {
 	model->setRowCount(0);
 
-	std::vector<Addon> addons = Core::search(ui->searchField->text().toUtf8().constData());
+	std::vector<Addon> addons = curse.search(ui->searchField->text().toUtf8().constData());
 
 	int i = 0;
 	for(Addon addon : addons) {
-		QLabel* label = new QLabel();
-		label->setPixmap(QPixmap("/home/jonas/Pictures/classic_tux.png"));
-		model->setItem(i, 0, nullptr);
-		ui->tableView->setIndexWidget(model->index(i, 0), label);
+		if(addon.getImageLink().compare("Not set") != 0) {
+			// Download the thumbnail image
+			Connection conn{};
+			conn.connect(addon.getImageLink());
+			conn.save_data_to_file("resources/tmp_thumbnail");
+			QLabel* label = new QLabel();
+			label->setPixmap(QPixmap("resources/tmp_thumbnail"));
+			label->setScaledContents(true);
+			model->setItem(i, 0, nullptr);
+			ui->tableView->setIndexWidget(model->index(i, 0), label);
+		} else {
+			// If there is no image we will display a happy little penguin for now :)
+			QLabel* label = new QLabel();
+			label->setPixmap(QPixmap("resources/Tux-icon-mono.svg"));
+			label->setScaledContents(true);
+			model->setItem(i, 0, nullptr);
+			ui->tableView->setIndexWidget(model->index(i, 0), label);
+		}
+
 		// ui->tableView->setIndexWidget(model->index(i, 0), thumbnail);
 		QStandardItem* name = new QStandardItem(QString("%0").arg(addon.getName().c_str()));
 		model->setItem(i, 1, name);
@@ -58,18 +78,31 @@ void MainWindow::on_searchButton_clicked() {
 		model->setItem(i, 5, nullptr);
 		QPushButton* downloadLink = new QPushButton();
 		downloadLink->setText("Download");
+		downloadLink->setProperty("link", QVariant(addon.getDownloadLink().c_str()));
+		connect(downloadLink, SIGNAL(released()), this, SLOT(downloadAddon()));
 		ui->tableView->setIndexWidget(model->index(i, 5), downloadLink);
 		i++;
 	}
 
 	ui->tableView->sortByColumn(4, Qt::DescendingOrder);
+}
 
-	// Glue model and view togeth {}er
-	// ui->tableWidget->;
-	// ui->listView->insertRow(ui->listView->rowCount());
+void MainWindow::on_installPathButton_released() {
+	// QFileDialog fileDialog(this);
+	// fileDialog.setFileMode(QFileDialog::DirectoryOnly);
+	// fileDialog.setViewMode(QFileDialog::Detail);
+	QDir defaultPath = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+			"/home", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+	ui->installPathField->setText(defaultPath.absolutePath());
+	std::cout << defaultPath.absolutePath().toUtf8().constData() << std::endl;
+}
 
-	// QModelIndex index = ui->listView->index(ui->listView->rowCount()-1);
-	// ui-listView->setData(index, firstEntry);
-	// QMessageBox::information(this, "Search button pressed!",
-			// ui->searchField->text(), QMessageBox::Ok);
+void MainWindow::downloadAddon() {
+	QObject* obj = sender();
+	QVariant value = obj->property("link");
+	std::string url = value.toString().toUtf8().constData();
+	std::cout << "Download link: " << url << std::endl;
+	Connection conn{};
+	conn.connect(url);
+	conn.save_data_to_file("test.zip");
 }

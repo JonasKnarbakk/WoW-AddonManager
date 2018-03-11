@@ -2,22 +2,65 @@
 #include <vector>
 #include <Addon.hpp>
 #include <curl/curl.h>
-#include <bzlib.h>
 #include <fstream>
 #include <iostream>
+#include <boost/algorithm/string.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/iostreams/filter/bzip2.hpp>
 #include <boost/iostreams/copy.hpp>
 #include <sstream>
 
-std::vector<Addon> Curse::search() {
+Curse::Curse() : AddonSource() {
+}
+
+Curse::~Curse() {
+
+}
+
+std::vector<Addon> Curse::search(std::string searchTerm) {
+
+	boost::algorithm::to_lower(searchTerm);
 	std::vector<Addon> addons;
+
+	// Search the json data
+	for (auto obj : jsonData["data"]) {
+		std::string currentObject = obj["Name"].get<std::string>();
+		boost::algorithm::to_lower(currentObject);
+		if(currentObject.find(searchTerm) != std::string::npos) {
+			Addon addon{};
+			if(!obj["Name"].is_null()) {
+				addon.setName(obj["Name"]);
+			}
+			if(!obj["LatestFiles"].is_null()) {
+				addon.setVersion(obj["LatestFiles"].at(0)["FileName"]);
+				addon.setSupportedVersion(obj["LatestFiles"].at(0)["GameVersion"].at(0));
+				addon.setDownloadLink(obj["LatestFiles"].at(0)["DownloadURL"]);
+			}
+			if(!obj["Attachments"].is_null()) {
+				for(auto img : obj["Attachments"]) { //.at(0)["ThumbnailUrl"]);
+					if(img["IsDefault"]) {
+						addon.setImageLink(img["ThumbnailUrl"]);
+					}
+				}
+				//addon.setImageLink(
+			}
+			if(!obj["DownloadCount"].is_null()) {
+				addon.setTotaltDownloads(obj["DownloadCount"]);
+			}
+			std::cout << "Found: " << currentObject << std::endl;
+			addons.push_back(addon);
+		}
+	}
+
 	return addons;
 }
 
 bool Curse::updateDatabase() {
 	downloadArchive();
 	decompressArchive();
+	// Get the json data from file
+	std::ifstream database("complete.json");
+	jsonData = nlohmann::json::parse(database);
 	return true;
 }
 
@@ -53,7 +96,7 @@ void Curse::downloadArchive() {
 				// Cleanup
 				curl_easy_cleanup(curl);
 				fclose(fileptr);
-				
+
 				return;
 			}
 		} else {
@@ -85,7 +128,7 @@ void Curse::decompressArchive() {
 		if (error == boost::iostreams::bzip2::data_error) {
 			// Compressed data stream is corrupted
 			std::cout << "Compressed data stream is corrupted!" << std::endl;
-		} else if (error == boost::iostreams::bzip2::data_error_magic) { 
+		} else if (error == boost::iostreams::bzip2::data_error_magic) {
 			// Compressed data does not begin with the magic sequence'B' 'Z' 'h'
 			std::cout << "Compressed data does not begin with the magic sequence \'B\' \'Z\' \'h\'" << std::endl;
 		} else if (error == boost::iostreams::bzip2::config_error) {
