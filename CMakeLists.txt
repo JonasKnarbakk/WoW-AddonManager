@@ -16,9 +16,41 @@ FIND_PACKAGE(Threads REQUIRED)
 # FIND_PACKAGE(PkgConfig REQUIRED)
 # PKG_CHECK_MODULES(GTK3 REQUIRED gtk+-3.0)
 
+IF (WIN32)
+# Set Qt5 Install location
+SET (CMAKE_PREFIX_PATH "C:\\Qt\\5.10.1\\msvc2015")
+FIND_PACKAGE (Qt5 REQUIRED Core Widgets Gui)
+# Set Library and include paths (These are valid if installed via NuGet)
+SET (CURL_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/build/packages/curl.7.30.0.2/build/native/lib/v110/Win32/Debug/dynamic/libcurl.lib)
+SET (CURL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build/packages/curl.7.30.0.2/build/native/include)
+SET	(BZIP2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build/packages/bzip2.v140.1.0.6.10/build/native/include)
+SET (BZIP2_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/build/packages/bzip2.v140.1.0.6.10/build/native/lib/Win32/Debug/libbz2d.lib)
+SET (Boost_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/build/packages/boost.1.66.0.0/lib/native/include)
+SET (Boost_LIBRARY_DIRS 
+	${CMAKE_CURRENT_SOURCE_DIR}/build/packages/boost_iostreams-vc141.1.66.0.0/lib/native
+	${CMAKE_CURRENT_SOURCE_DIR}/build/packages/boost_bzip2-vc141.1.66.0.0/lib/native
+)
+
+SET (NLOHMANN_JSON_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/windowslibs/json-develop/include)
+SET (DIRENT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/windowslibs/dirent-master/include)
+#SET(Qt5::Core C:/Qt/Tools/QtCreator/bin/Qt5Core.dll)
+#SET(Qt5::Widgets C:/Qt/Tools/QtCreator/bin/Qt5Widgets.dll)
+
+#SET(Qt5::Gui C:/Qt/Tools/QtCreator/bin/Qt5Gui.dll)
+#REQUIRED Core Widgets Gui)
+SET(MAINWINDOW_UI ${PROJECT_SOURCE_DIR}/mainwindow.ui)
+SET(MAINWINDOW_SRC ${PROJECT_SOURCE_DIR}/mainwindow.cpp)
+SET(MAINWINDOW_HDR ${PROJECT_SOURCE_DIR}/mainwindow.h)
+QT5_WRAP_UI(MAINWINDOW_WRAP ${MAINWINDOW_UI})
+QT5_WRAP_CPP(MAINWINDOW_MOC ${MAINWINDOW_HDR})
+
+ELSE ()
+
+# CURL
 FIND_PACKAGE(CURL REQUIRED)
 
-FIND_PACKAGE(Qt5 REQUIRED Core Widgets Gui)
+# Qt5
+
 SET(MAINWINDOW_UI ${PROJECT_SOURCE_DIR}/mainwindow.ui)
 SET(MAINWINDOW_SRC ${PROJECT_SOURCE_DIR}/mainwindow.cpp)
 SET(MAINWINDOW_HDR ${PROJECT_SOURCE_DIR}/mainwindow.h)
@@ -30,6 +62,8 @@ FIND_PACKAGE(BZip2)
 FIND_PACKAGE(Boost REQUIRED COMPONENTS system iostreams)
 
 # SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
+
+ENDIF ()
 
 CONFIGURE_FILE (
 	${PROJECT_NAME}.hpp.in
@@ -43,6 +77,10 @@ INCLUDE_DIRECTORIES (
 	${Boost_INCLUDE_DIRS}
 	# ${GTK3_INCLUDE_DIRS}
 	${PROJECT_BINARY_DIR}/generated/
+	IF (WIN32)
+	${NLOHMANN_JSON_INCLUDE_DIR}
+	${DIRENT_INCLUDE_DIR}
+	ENDIF ()
 )
 
 LINK_DIRECTORIES (
