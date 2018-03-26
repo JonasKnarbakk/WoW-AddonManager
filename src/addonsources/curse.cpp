@@ -32,9 +32,24 @@ std::vector<Addon> Curse::search(std::string searchTerm) {
 				addon.setName(obj["Name"]);
 			}
 			if(!obj["LatestFiles"].is_null()) {
-				addon.setVersion(obj["LatestFiles"].at(0)["FileName"]);
-				addon.setSupportedVersion(obj["LatestFiles"].at(0)["GameVersion"].at(0));
-				addon.setDownloadLink(obj["LatestFiles"].at(0)["DownloadURL"]);
+				std::string latestDateTime;
+				nlohmann::json latestFile;
+				for(auto& latestFiles : obj["LatestFiles"]) {
+					// std::cout << "Auto Type: " << typeid(latestFiles).name();
+					if(latestDateTime.empty()) {
+						latestDateTime = latestFiles["FileDate"];
+					}
+					if(!latestFiles["IsAlternate"]
+					&& (latestDateTime <= latestFiles["FileDate"])) {
+						latestDateTime = latestFiles["FileDate"];
+						latestFile = latestFiles;
+					}
+				}
+				if(latestFile != nullptr) {
+					addon.setVersion(latestFile["FileName"]);
+					addon.setSupportedVersion(latestFile["GameVersion"].at(0));
+					addon.setDownloadLink(latestFile["DownloadURL"]);
+				}
 			}
 			if(!obj["Attachments"].is_null()) {
 				for(auto img : obj["Attachments"]) { //.at(0)["ThumbnailUrl"]);
