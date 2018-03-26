@@ -19,6 +19,10 @@ Curse::~Curse() {
 
 std::vector<Addon> Curse::search(std::string searchTerm) {
 
+	if(searchTerm.empty()){
+		return {};
+	}
+
 	boost::algorithm::to_lower(searchTerm);
 	std::vector<Addon> addons;
 
