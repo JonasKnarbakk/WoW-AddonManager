@@ -231,7 +231,6 @@ void MainWindow::extractZipArchive(std::string filepath) {
 			for(auto& folder : folders) {
 				if(!folder.empty()) {
 					if(!boost::filesystem::exists(path.str())) {
-						std::cout << path.str() << ": does not exist!" << std::endl;
 						boost::filesystem::create_directory(path.str());
 					}
 					path << "/" << folder;
@@ -250,7 +249,7 @@ void MainWindow::extractZipArchive(std::string filepath) {
 				}
 
 
-				fd = open(fileToCreate.str().c_str(), O_RDWR | O_TRUNC | O_CREAT);
+				fd = open(fileToCreate.str().c_str(), O_RDWR | O_TRUNC | O_CREAT, 0666);
 				if (fd < 0) {
 					fprintf(stderr, "Failed to open %s ERROR: %d\n", fileToCreate.str().c_str(), fd);
 					return;
