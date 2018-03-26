@@ -23,47 +23,11 @@ std::vector<Addon> Curse::search(std::string searchTerm) {
 	std::vector<Addon> addons;
 
 	// Search the json data
-	for (auto obj : jsonData["data"]) {
+	for (nlohmann::json obj : jsonData["data"]) {
 		std::string currentObject = obj["Name"].get<std::string>();
 		boost::algorithm::to_lower(currentObject);
 		if(currentObject.find(searchTerm) != std::string::npos) {
-			Addon addon{};
-			if(!obj["Name"].is_null()) {
-				addon.setName(obj["Name"]);
-			}
-			if(!obj["LatestFiles"].is_null()) {
-				std::string latestDateTime;
-				nlohmann::json latestFile;
-				for(auto& latestFiles : obj["LatestFiles"]) {
-					// std::cout << "Auto Type: " << typeid(latestFiles).name();
-					if(latestDateTime.empty()) {
-						latestDateTime = latestFiles["FileDate"];
-					}
-					if(!latestFiles["IsAlternate"]
-					&& (latestDateTime <= latestFiles["FileDate"])) {
-						latestDateTime = latestFiles["FileDate"];
-						latestFile = latestFiles;
-					}
-				}
-				if(latestFile != nullptr) {
-					addon.setVersion(latestFile["FileName"]);
-					addon.setSupportedVersion(latestFile["GameVersion"].at(0));
-					addon.setDownloadLink(latestFile["DownloadURL"]);
-				}
-			}
-			if(!obj["Attachments"].is_null()) {
-				for(auto img : obj["Attachments"]) { //.at(0)["ThumbnailUrl"]);
-					if(img["IsDefault"]) {
-						addon.setImageLink(img["ThumbnailUrl"]);
-					}
-				}
-				//addon.setImageLink(
-			}
-			if(!obj["DownloadCount"].is_null()) {
-				addon.setTotaltDownloads(obj["DownloadCount"]);
-			}
-			std::cout << "Found: " << currentObject << std::endl;
-			addons.push_back(addon);
+			addons.push_back(parseAddonData(obj));
 		}
 	}
 
@@ -156,4 +120,42 @@ void Curse::decompressArchive() {
 			std::cout << error << ": Caught error of unkown type: " << exception.what() << std::endl;
 		}
 	}
+}
+
+Addon Curse::parseAddonData(nlohmann::json object) {
+	Addon addon;
+	if(!object["Name"].is_null()) {
+		addon.setName(object["Name"]);
+	}
+	if(!object["LatestFiles"].is_null()) {
+		std::string latestDateTime;
+		nlohmann::json latestFile;
+		for(auto& latestFiles : object["LatestFiles"]) {
+			if(latestDateTime.empty()) {
+				latestDateTime = latestFiles["FileDate"];
+			}
+			if(!latestFiles["IsAlternate"]
+			&& (latestDateTime <= latestFiles["FileDate"])) {
+				latestDateTime = latestFiles["FileDate"];
+				latestFile = latestFiles;
+			}
+		}
+		if(latestFile != nullptr) {
+			addon.setVersion(latestFile["FileName"]);
+			addon.setSupportedVersion(latestFile["GameVersion"].at(0));
+			addon.setDownloadLink(latestFile["DownloadURL"]);
+		}
+	}
+	if(!object["Attachments"].is_null()) {
+		for(auto img : object["Attachments"]) { //.at(0)["ThumbnailUrl"]);
+			if(img["IsDefault"]) {
+				addon.setImageLink(img["ThumbnailUrl"]);
+			}
+		}
+		//addon.setImageLink(
+	}
+	if(!object["DownloadCount"].is_null()) {
+		addon.setTotaltDownloads(object["DownloadCount"]);
+	}
+	return addon;
 }
