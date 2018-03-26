@@ -23,6 +23,7 @@ class Core{
         static void install(std::string addon);
         static bool sortByNames(const Addon &a1, const Addon &a2);
         static bool sortByDownloads(const Addon &a1, const Addon &a2);
+	static void extractZipArchive(std::string filepath);
 };
 
 #endif
