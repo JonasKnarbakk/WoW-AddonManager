@@ -278,4 +278,10 @@ void MainWindow::extractZipArchive(std::string filepath) {
 		fprintf(stderr, "can't close zip archive %s\n", archive);
 		return;
 	}
+
+	std::cout << "Filepath value: " << filepath << std::endl;
+	if(boost::filesystem::exists(filepath)) {
+		std::cout << "Deleting file: " << filepath << std::endl;
+		boost::filesystem::remove(filepath);
+	}
 }
