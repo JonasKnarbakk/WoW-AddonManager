@@ -49,7 +49,6 @@ bool Connection::save_data_to_file(std::string filename){
             // Cleanup
 
             curl_easy_cleanup(curl);
-
             fclose(fileptr);
 
             return false;
@@ -57,11 +56,12 @@ bool Connection::save_data_to_file(std::string filename){
 
     } else {
         printf("Failed to save html to file.\n");
+	curl_easy_cleanup(curl);
+	fclose(fileptr);
         return false;
     }
 
     curl_easy_cleanup(curl);
-
     fclose(fileptr);
 
     return true;

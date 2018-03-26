@@ -1,14 +1,17 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-// #include <QMessageBox>
-// #include <QStandardItemModel>
-// #include <QSortFilterProxyModel>
-// #include <QtWidgets>
-// #include <QTableWidgetItem>
 #include "Core.hpp"
 #include "Addon.hpp"
 #include <iostream>
 #include <Connection.h>
+#include <zip.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <boost/filesystem.hpp>
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -65,6 +68,8 @@ void MainWindow::on_installPathButton_released() {
 	Core::setInstallPath(defaultPath.absolutePath().toUtf8().constData());
 }
 
+// TODO: Create index over unzipped files so cleanup will
+// be easy when updating or uninstalling
 void MainWindow::downloadAddon() {
 	QObject* obj = sender();
 	QVariant value = obj->property("link");
@@ -72,7 +77,9 @@ void MainWindow::downloadAddon() {
 	std::cout << "Download link: " << url << std::endl;
 	Connection conn{};
 	conn.connect(url);
-	conn.save_data_to_file("test.zip");
+	conn.save_data_to_file(Core::getInstallPath() + "/tmp.zip");
+
+	extractZipArchive(Core::getInstallPath() + "/tmp.zip");
 }
 
 void Worker::run() {
@@ -173,4 +180,103 @@ void MainWindow::showSearchButton() {
 	ui->searchButton->setVisible(true);
 	ui->loadingIcon->movie()->stop();
 	ui->loadingIcon->setVisible(false);
+}
+
+void MainWindow::extractZipArchive(std::string filepath) {
+	const char* archive;
+	struct zip* za;
+	struct zip_file* zf;
+	struct zip_stat sb;
+	char buff[100];
+	int err;
+	int i, len;
+	int fd;
+	long long sum;
+
+	archive = filepath.c_str();
+	if ((za = zip_open(archive, 0, &err)) == NULL) {
+		zip_error_to_str(buff, sizeof(buff), err, errno);
+		fprintf(stderr, "can't open zip archive %s : %s\n", archive, buff);
+		return;
+	}
+
+	for (i = 0; i < zip_get_num_entries(za, 0); i++) {
+		if (zip_stat_index(za, i, 0, &sb) == 0) {
+			std::stringstream fileToCreate;
+			std::string filepathCopy = filepath;
+			const std::string ext("tmp.zip");
+			if( filepathCopy != ext
+				&& filepathCopy.size() > ext.size()
+				&& filepathCopy.substr(filepathCopy.size() - ext.size()) == "tmp.zip") {
+				fileToCreate << filepathCopy.substr(0, filepathCopy.size() - ext.size());
+			}
+			fileToCreate << sb.name;
+			printf("==================\n");
+			len = strlen(sb.name);
+			printf("Name: [%s], ", sb.name);
+			printf("Size: [%llu], ", sb.size);
+			printf("mtime: [%u]\n", (unsigned int)sb.mtime);
+			printf("File name: ", sb.name);
+
+
+			std::vector<std::string> folders;
+			std::string segment;
+			while(std::getline(fileToCreate, segment, '/')) {
+				folders.push_back(segment);
+			}
+
+			std::stringstream path;
+			// Start in the root directory
+			path << "/";
+			for(auto& folder : folders) {
+				if(!folder.empty()) {
+					if(!boost::filesystem::exists(path.str())) {
+						std::cout << path.str() << ": does not exist!" << std::endl;
+						boost::filesystem::create_directory(path.str());
+					}
+					path << "/" << folder;
+				}
+			}
+			if (sb.name[len - 1] == '/') {
+				printf("Creating main directory");
+				if (mkdir(fileToCreate.str().c_str(), 0700) < 0) {
+					fprintf(stderr, "Failed to create folder %s\n", fileToCreate.str().c_str());
+				}
+			} else {
+				zf = zip_fopen_index(za, i, 0);
+				if (!zf) {
+					fprintf(stderr, "Failed to open at index\n");
+					return;
+				}
+
+
+				fd = open(fileToCreate.str().c_str(), O_RDWR | O_TRUNC | O_CREAT);
+				if (fd < 0) {
+					fprintf(stderr, "Failed to open %s ERROR: %d\n", fileToCreate.str().c_str(), fd);
+					return;
+				}
+
+				sum = 0;
+
+				while (sum != sb.size) {
+					len = zip_fread(zf, buff, 100);
+					if (len < 0) {
+						fprintf(stderr, "Failed to read archive\n");
+						return;
+					}
+					write(fd, buff, len);
+					sum += len;
+				}
+				::close(fd);
+				zip_fclose(zf);
+			}
+		} else {
+			printf("File[%s] Line[%d]\n", __FILE__, __LINE__);
+		}
+	}
+
+	if (zip_close(za) == -1) {
+		fprintf(stderr, "can't close zip archive %s\n", archive);
+		return;
+	}
 }

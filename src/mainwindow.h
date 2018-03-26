@@ -57,6 +57,7 @@ private:
 	void startSearchThread();
 	void showLoadingIcon();
 	void showSearchButton();
+	void extractZipArchive(std::string filepath);
 };
 
 #endif // MAINWINDOW_H
