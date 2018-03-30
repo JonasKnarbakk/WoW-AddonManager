@@ -4,6 +4,9 @@
 #include "Addon.hpp"
 #include <iostream>
 #include <Connection.h>
+#include <thread>
+
+extern std::mutex MainWindow::thumbnailLock;
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -18,21 +21,22 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->loadingIcon->setMovie(movie);
 	ui->loadingIcon->setVisible(false);
 
+	// Populate the header
 	QStringList columnNames;
 	columnNames << "Image" << "Name" << "Version" << "Supports" << "Downloads" << " ";
 	model->setHorizontalHeaderLabels(columnNames);
 
+	// Make the table stretch to the window size
 	ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	ui->tableView->setModel(model);
 
+	// Get the addon install path
 	ui->installPathField->setText(QString("%0").arg(Core::getInstallPath().c_str()));
 
+	// Set row height
 	QHeaderView *verticalHeader = ui->tableView->verticalHeader();
 	verticalHeader->setSectionResizeMode(QHeaderView::Fixed);
 	verticalHeader->setDefaultSectionSize(100);
-	// QSortFilterProxyModel proxyModel;
-	// proxyModel.setSourceModel(model);
-	// ui->tableView->sortByColumn(4, Qt::DescendingOrder);
 }
 
 MainWindow::~MainWindow()
@@ -69,32 +73,52 @@ void MainWindow::downloadAddon() {
 	std::cout << "Download link: " << url << std::endl;
 	Connection conn{};
 	conn.connect(url);
-	conn.save_data_to_file(Core::getInstallPath() + "/tmp.zip");
 
-	Core::extractZipArchive(Core::getInstallPath() + "/tmp.zip");
+	namespace bf = boost::filesystem;
+
+	bf::path tmpFile = bf::unique_path("%%%%%%%%%%%%%%%%");
+	std::string filepath = Core::getInstallPath()
+		+ bf::path::preferred_separator
+		+ tmpFile.filename().native();
+	std::cout << "Saving file to: " << filepath << std::endl;
+	conn.save_data_to_file(filepath);
+
+	Core::extractZipArchive(filepath);
 }
 
 void Worker::run() {
 	std::cout << "doWork started" << std::endl;
 	/* Expensive operation */
-	Curse curse{};
-	curse.updateDatabase();
-	std::vector<Addon> addons = curse.search(searchParam);
+	std::cout << "Searching for: " << searchParam << std::endl;
+	std::vector<Addon> addons = Core::search(searchParam);
 
 	std::vector<QPixmap> thumbnails;
+	std::vector<std::thread> threads;
+
 	for (Addon addon : addons) {
 		if(addon.getImageLink().compare("Not set") != 0) {
-			// Download the thumbnail image
-			Connection conn{};
-			conn.connect(addon.getImageLink());
-			conn.save_data_to_file("resources/tmp_thumbnail");
-			QPixmap pixmap("resources/tmp_thumbnail");
+			threads.push_back(std::thread(MainWindow::getThumbnail,
+					addon.getImageLink()));
+
+			// We don't want the amount of threads to get out of hand
+			if(threads.size() >= std::thread::hardware_concurrency()) {
+				for(auto& thread : threads) {
+					thread.join();
+				}
+				threads.clear();
+			}
+
+			QPixmap pixmap("resources/Tux-icon-mono.svg");
 			thumbnails.push_back(pixmap);
 		} else {
 			// If there is no image we will display a happy little penguin for now :)
 			QPixmap pixmap("resources/Tux-icon-mono.svg");
 			thumbnails.push_back(pixmap);
 		}
+	}
+
+	for(auto& thread : threads) {
+		thread.join();
 	}
 
 	std::cout << "doWork finished" << std::endl;
@@ -175,3 +199,24 @@ void MainWindow::showSearchButton() {
 }
 
 
+void MainWindow::getThumbnail(const std::string url) {
+	namespace bf = boost::filesystem;
+
+	bf::path tmpStorage = bf::temp_directory_path();
+	bf::path tmpFile = bf::unique_path("%%%%%%%%%%%%%%%%");
+
+	std::string tmpFileLocation = "resources/"
+		+ tmpStorage.filename().native()
+		+ tmpFile.filename().native();
+	// Download the thumbnail image
+	Connection conn{};
+	conn.connect(url);
+	conn.save_data_to_file(tmpFileLocation.c_str());
+	QPixmap pixmap(tmpFileLocation.c_str());
+
+	// thumbnailLock.lock();
+	std::cout << "Saving thumbail as: " << tmpFileLocation << std::endl;
+	// thumbnails.push_back(pixmap);
+	bf::remove(tmpFileLocation);
+	// thumbnailLock.unlock();
+}

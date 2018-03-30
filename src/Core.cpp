@@ -9,7 +9,6 @@
 #include "Connection.h"
 #include "HTMLParser.hpp"
 #include <sstream>
-#include <boost/filesystem.hpp>
 #include <zip.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -18,19 +17,14 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-Core::Core(){
-}
-
-Core::~Core(){
-}
-
+Curse Core::curse;
 std::string Core::m_InstallPath;
 
 void Core::setInstallPath(std::string path){
 	Core::m_InstallPath = path;
 
 	FILE * fileptr = fopen("settings.txt", "w");
-	
+
 	if(fileptr){
 		std::string setting = "PATH=" + Core::m_InstallPath + "\n";
 		fputs(setting.c_str(), fileptr);
@@ -67,6 +61,10 @@ void Core::checkSettings(){
 	}
 }
 
+void Core::updateDatabase() {
+	curse.updateDatabase();
+}
+
 void Core::downloadHTML(std::vector<std::string> *list, std::string url, unsigned int count){
 	Connection conn;
 	std::string filename = "addon" + std::to_string(count) + ".html";
@@ -78,52 +76,52 @@ void Core::downloadHTML(std::vector<std::string> *list, std::string url, unsigne
 }
 
 std::vector<Addon> Core::search(std::string search){
+	return curse.search(search);
+	// std::vector<Addon> addons;
+	// std::vector<std::string> filesCreated;
 
-	std::vector<Addon> addons;
-	std::vector<std::string> filesCreated;
+	// std::string website = "https://www.curseforge.com/wow/addons/search?search=";
+	// std::transform(search.begin(), search.end(), search.begin(), [](char ch) {
+		// return ch == ' ' ? '+' : ch;
+	// });
+	// std::string finalSearch = website + search;
+	// Connection con;
+	// if(con.connect(finalSearch)){
+		// con.save_data_to_file("searchResults.html");
+	// }
 
-	std::string website = "https://www.curseforge.com/wow/addons/search?search=";
-	std::transform(search.begin(), search.end(), search.begin(), [](char ch) {
-		return ch == ' ' ? '+' : ch;
-	});
-	std::string finalSearch = website + search;
-	Connection con;
-	if(con.connect(finalSearch)){
-		con.save_data_to_file("searchResults.html");
-	}
-	
-	HTMLParser parse("searchResults.html");
-	parse.init();
+	// HTMLParser parse("searchResults.html");
+	// parse.init();
 
-	remove("searchResults.html");
+	// remove("searchResults.html");
 
-	// Do a multithreaded download for the HTML for all addons found
-	std::vector<std::string> result = parse.getAddonLinks();
-	std::vector<std::string>::iterator it;
+	// // Do a multithreaded download for the HTML for all addons found
+	// std::vector<std::string> result = parse.getAddonLinks();
+	// std::vector<std::string>::iterator it;
 
-	std::vector<std::thread> threads;
-	std::vector<std::thread>::iterator tit;
+	// std::vector<std::thread> threads;
+	// std::vector<std::thread>::iterator tit;
 
-	int count = 1;
+	// int count = 1;
 
-	for(it = begin(result); it != end(result); ++it){
-		threads.push_back(std::thread(downloadHTML, &filesCreated, *it, count));
-		count++;
-	}
+	// for(it = begin(result); it != end(result); ++it){
+		// threads.push_back(std::thread(downloadHTML, &filesCreated, *it, count));
+		// count++;
+	// }
 
-	// Wait for all started threads to finish
-	for(tit = begin(threads); tit != end(threads); ++tit){
-		tit->join();
-	}
-	// Cleanup, delete all files created
-	for(it = begin(filesCreated); it != end(filesCreated); ++it){
-		std::string filename = *it;
-		HTMLParser p(filename);
-		addons.push_back(p.getAddon());
-		remove(filename.c_str());
-	}
+	// // Wait for all started threads to finish
+	// for(tit = begin(threads); tit != end(threads); ++tit){
+		// tit->join();
+	// }
+	// // Cleanup, delete all files created
+	// for(it = begin(filesCreated); it != end(filesCreated); ++it){
+		// std::string filename = *it;
+		// HTMLParser p(filename);
+		// addons.push_back(p.getAddon());
+		// remove(filename.c_str());
+	// }
 
-	return addons;
+	// return addons;
 }
 
 std::vector<Addon> Core::list(){
@@ -133,7 +131,7 @@ std::vector<Addon> Core::list(){
 
 	if(dirptr){
 		while((dptr = readdir(dirptr)) != nullptr){
-			std::cout << dptr << std::endl; 
+			std::cout << dptr << std::endl;
 		}
 	} else {
 		printf("Could not open directory: %s\n", Core::m_InstallPath.c_str());
@@ -193,10 +191,13 @@ void Core::extractZipArchive(std::string filepath) {
 		if (zip_stat_index(za, i, 0, &sb) == 0) {
 			std::stringstream fileToCreate;
 			std::string filepathCopy = filepath;
-			const std::string ext("tmp.zip");
+			std::string tmpFile;
+			std::size_t found = filepath.find_last_of(boost::filesystem::path::preferred_separator);
+			const std::string ext(filepath.substr(found+1));
+			std::cout << "Substring: " << filepath.substr(found+1);
 			if( filepathCopy != ext
 				&& filepathCopy.size() > ext.size()
-				&& filepathCopy.substr(filepathCopy.size() - ext.size()) == "tmp.zip") {
+				&& filepathCopy.substr(filepathCopy.size() - ext.size()) == filepath.substr(found+1)) {
 				fileToCreate << filepathCopy.substr(0, filepathCopy.size() - ext.size());
 			}
 			fileToCreate << sb.name;
@@ -220,6 +221,7 @@ void Core::extractZipArchive(std::string filepath) {
 			for(auto& folder : folders) {
 				if(!folder.empty()) {
 					if(!boost::filesystem::exists(path.str())) {
+						std::cout << "Attempting to create file: " << path.str() << std::endl;
 						boost::filesystem::create_directory(path.str());
 					}
 					path << "/" << folder;
@@ -268,9 +270,47 @@ void Core::extractZipArchive(std::string filepath) {
 		return;
 	}
 
+	// Clean up the tmp file
 	std::cout << "Filepath value: " << filepath << std::endl;
 	if(boost::filesystem::exists(filepath)) {
 		std::cout << "Deleting file: " << filepath << std::endl;
 		boost::filesystem::remove(filepath);
+	}
+}
+
+std::vector<Addon> Core::indexInstalled() {
+	namespace bf = boost::filesystem;
+
+	bf::path addonDir(m_InstallPath);
+
+	if(!bf::exists(addonDir)) {
+		std::vector<Addon> empty;
+		return empty;
+	}
+
+	std::vector<Addon> installed;
+
+	findAddons(addonDir, installed);
+
+	// TODO: Find a way to get an overview of what is
+	// the main addon folder and what is dependecies of an addon
+	for(auto& addon : installed) {
+		// std::cout << "Found installed addon: " << addon << std::endl;
+	}
+
+}
+
+void Core::findAddons( const boost::filesystem::path & dirPath,
+			std::vector<Addon>& addons) {
+	namespace bf = boost::filesystem;
+
+	bf::directory_iterator endItr;
+	for(bf::directory_iterator itr(dirPath);
+		itr != endItr;
+		++itr) {
+		if(bf::is_directory(itr->status())) {
+			Addon addon(itr->path().filename().native());
+			addons.push_back(addon);
+		}
 	}
 }

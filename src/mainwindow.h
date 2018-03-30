@@ -7,6 +7,7 @@
 #include <QThread>
 #include <addonsources/curse.hpp>
 #include <QMetaType>
+#include <mutex>
 
 Q_DECLARE_METATYPE(std::vector<Addon>);
 Q_DECLARE_METATYPE(std::vector<QPixmap>);
@@ -37,6 +38,7 @@ class MainWindow : public QMainWindow
 public:
 	explicit MainWindow(QWidget* parent = 0);
 	~MainWindow();
+	static void getThumbnail(const std::string url);
 
 public slots:
 	void handleResults(const QVariant& variantAddons, const QVariant& variantThumbnails);
@@ -57,6 +59,7 @@ private:
 	void startSearchThread();
 	void showLoadingIcon();
 	void showSearchButton();
+	static std::mutex thumbnailLock;
 };
 
 #endif // MAINWINDOW_H

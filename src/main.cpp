@@ -27,9 +27,9 @@ int main(int argc, char * argv[]){
 		<< PROJECT_VERSION_MINOR << "." << PROJECT_VERSION_HOTFIX << std::endl;
 	std::cout << project_string.str();
 
-	// curse.updateDatabase();
-	// curse.search("RECOUNT");
 	Core::checkSettings();
+	Core::indexInstalled();
+	Core::updateDatabase();
 
 	if(argc == 1) {
 		// Luanch in graphical mode
@@ -42,16 +42,19 @@ int main(int argc, char * argv[]){
 		std::string arg = argv[1];
 		if(arg.compare("search") == 0){
 			std::vector<Addon>searchResults;
-			std::string searchQuery;
+			std::stringstream searchQuery;
 			for(int i = 2; i < argc; i++){
 				std::string arg = argv[i];
-				searchQuery += arg + " ";
+				searchQuery << arg;
+				if(i + 1 < argc) {
+					searchQuery << " ";
+				}
 			}
-			searchResults = Core::search(searchQuery);
-			std::vector<Addon>::iterator it;
+			std::cout << "Searching for: " << searchQuery.str() << std::endl;
+			searchResults = Core::search(searchQuery.str());
 			std::sort(searchResults.begin(), searchResults.end(), Core::sortByDownloads);
-			for(it = searchResults.begin(); it != searchResults.end(); ++it){
-				std::cout << *it << "\n" << std::endl;
+			for(auto& addon : searchResults){
+				std::cout << addon << "\n" << std::endl;
 			}
 		} else if (arg.compare("list") == 0){
 			Core::list();

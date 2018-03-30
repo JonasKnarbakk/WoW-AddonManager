@@ -19,7 +19,9 @@ Curse::~Curse() {
 
 std::vector<Addon> Curse::search(std::string searchTerm) {
 
-	if(searchTerm.empty()){
+	// Any search with less than 3 characters
+	// is trouble in the current implementation
+	if(searchTerm.length() < 3){
 		return {};
 	}
 
@@ -67,8 +69,8 @@ void Curse::downloadArchive() {
 		CURLcode res;
 		printf("Attemptin to create file %s\n", filename.c_str());
 		FILE *fileptr = fopen(filename.c_str(), "w");
-
 		if(fileptr){
+
 			// Write the html body data to file
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, fileptr);
 			res = curl_easy_perform(curl);
