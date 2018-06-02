@@ -18,6 +18,7 @@
 #include <stdio.h>
 
 Curse Core::curse;
+Logger Core::logger;
 std::string Core::m_InstallPath;
 
 void Core::setInstallPath(std::string path){
@@ -131,10 +132,14 @@ std::vector<Addon> Core::list(){
 
 	if(dirptr){
 		while((dptr = readdir(dirptr)) != nullptr){
-			std::cout << dptr << std::endl;
+			std::stringstream output;
+			output << dptr;
+			logger.log(output.str(), Logger::logLevel::INFO);
 		}
 	} else {
-		printf("Could not open directory: %s\n", Core::m_InstallPath.c_str());
+		std::stringstream errorMessage;
+		errorMessage << "Could not open directory: %s\n", Core::m_InstallPath.c_str();
+		logger.log(errorMessage.str(), Logger::logLevel::INFO);
 	}
 	closedir(dirptr);
 	return list;
@@ -194,7 +199,7 @@ void Core::extractZipArchive(std::string filepath) {
 			std::string tmpFile;
 			std::size_t found = filepath.find_last_of(boost::filesystem::path::preferred_separator);
 			const std::string ext(filepath.substr(found+1));
-			std::cout << "Substring: " << filepath.substr(found+1);
+			logger.log("Substring: " + filepath.substr(found+1), Logger::logLevel::INFO);
 			if( filepathCopy != ext
 				&& filepathCopy.size() > ext.size()
 				&& filepathCopy.substr(filepathCopy.size() - ext.size()) == filepath.substr(found+1)) {
@@ -221,7 +226,7 @@ void Core::extractZipArchive(std::string filepath) {
 			for(auto& folder : folders) {
 				if(!folder.empty()) {
 					if(!boost::filesystem::exists(path.str())) {
-						std::cout << "Attempting to create file: " << path.str() << std::endl;
+						logger.log("Attempting to create file: " + path.str(), Logger::logLevel::INFO);
 						boost::filesystem::create_directory(path.str());
 					}
 					path << "/" << folder;
@@ -271,9 +276,9 @@ void Core::extractZipArchive(std::string filepath) {
 	}
 
 	// Clean up the tmp file
-	std::cout << "Filepath value: " << filepath << std::endl;
+	logger.log("Filepath value: " + filepath, Logger::logLevel::INFO);
 	if(boost::filesystem::exists(filepath)) {
-		std::cout << "Deleting file: " << filepath << std::endl;
+		logger.log("Deleting file:" + filepath, Logger::logLevel::INFO);
 		boost::filesystem::remove(filepath);
 	}
 }
@@ -312,5 +317,15 @@ void Core::findAddons( const boost::filesystem::path & dirPath,
 			Addon addon(itr->path().filename().native());
 			addons.push_back(addon);
 		}
+	}
+}
+
+bool Core::checkConnection() {
+	if(system("ping -c3 8.8.8.8 > /dev/null") == 0) {
+		return true;
+	} else if (system("ping -c3 208.67.222.222 > /dev/null") == 0) {
+		return true;
+	} else {
+		return false;
 	}
 }

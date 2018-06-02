@@ -18,15 +18,25 @@
 #include <chrono>
 #include <thread>
 #include <addonsources/curse.hpp>
+#include <Logger.hpp>
 
 int main(int argc, char * argv[]){
+
+	Logger logger;
 
 	// Print out project name and version
 	std::stringstream project_string;
 	project_string << PROJECT_NAME << " Version: " << PROJECT_VERSION_MAJOR << "."
-		<< PROJECT_VERSION_MINOR << "." << PROJECT_VERSION_HOTFIX << std::endl;
-	std::cout << project_string.str();
+		<< PROJECT_VERSION_MINOR << "." << PROJECT_VERSION_HOTFIX;
+	logger.log(project_string.str(), Logger::logLevel::INFO);
 
+
+
+	if(Core::checkConnection()) {
+		logger.log("Valid connection detected.", Logger::logLevel::INFO);
+	} else {
+		logger.log("Could not detect a valid internet connection", Logger::logLevel::INFO);
+	}
 	Core::checkSettings();
 	Core::indexInstalled();
 	Core::updateDatabase();

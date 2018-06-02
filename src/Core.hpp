@@ -6,12 +6,14 @@
 #include "Addon.hpp"
 #include <boost/filesystem.hpp>
 #include <addonsources/curse.hpp>
+#include <Logger.hpp>
 
 class Core{
 	public:
 		static void setInstallPath(std::string path);
 		static std::string getInstallPath();
 
+		static bool checkConnection();
 		static void checkSettings();
 		static void updateDatabase();
 		static void downloadHTML(std::vector<std::string> *list, std::string url, unsigned int count);
@@ -24,6 +26,7 @@ class Core{
 		static std::vector<Addon> indexInstalled();
 	private:
 		static Curse curse;
+		static Logger logger;
 		static std::string m_InstallPath;
 		static std::vector<Addon> m_Installed;
 		static void findAddons( const boost::filesystem::path& dirPath,

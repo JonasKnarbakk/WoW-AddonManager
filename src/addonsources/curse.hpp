@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <Addon.hpp>
-#include <nlohmann/json.hpp>
+#include <json.hpp>
 #include <addonsources/addonsource.hpp>
 
 class Curse;
