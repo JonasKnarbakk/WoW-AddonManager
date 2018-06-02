@@ -32,7 +32,7 @@ int main(int argc, char * argv[]){
 	Core::updateDatabase();
 
 	if(argc == 1) {
-		// Luanch in graphical mode
+		// Launch in graphical mode
 		QApplication app(argc, argv);
 		MainWindow mainWindow;
 		mainWindow.show();
