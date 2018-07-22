@@ -128,40 +128,72 @@ void Curse::decompressArchive() {
 	}
 }
 
-Addon Curse::parseAddonData(nlohmann::json object) {
+Addon Curse::parseAddonData(nlohmann::json jsonAddon) {
 	Addon addon;
-	if(!object["Name"].is_null()) {
-		addon.setName(object["Name"]);
+	if(!jsonAddon["Name"].is_null()) {
+		addon.setName(jsonAddon["Name"]);
 	}
-	if(!object["LatestFiles"].is_null()) {
-		std::string latestDateTime;
-		nlohmann::json latestFile;
-		for(auto& latestFiles : object["LatestFiles"]) {
-			if(latestDateTime.empty()) {
-				latestDateTime = latestFiles["FileDate"];
-			}
-			if(!latestFiles["IsAlternate"]
-			&& (latestDateTime <= latestFiles["FileDate"])) {
-				latestDateTime = latestFiles["FileDate"];
-				latestFile = latestFiles;
-			}
-		}
+	if(!jsonAddon["LatestFiles"].is_null()) {
+		nlohmann::json latestFile = getLatestFile(jsonAddon);
 		if(latestFile != nullptr) {
 			addon.setVersion(latestFile["FileName"]);
 			addon.setSupportedVersion(latestFile["GameVersion"].at(0));
 			addon.setDownloadLink(latestFile["DownloadURL"]);
 		}
 	}
-	if(!object["Attachments"].is_null()) {
-		for(auto img : object["Attachments"]) { //.at(0)["ThumbnailUrl"]);
+	if(!jsonAddon["Attachments"].is_null()) {
+		for(auto img : jsonAddon["Attachments"]) { //.at(0)["ThumbnailUrl"]);
 			if(img["IsDefault"]) {
 				addon.setImageLink(img["ThumbnailUrl"]);
 			}
 		}
 		//addon.setImageLink(
 	}
-	if(!object["DownloadCount"].is_null()) {
-		addon.setTotaltDownloads(object["DownloadCount"]);
+	if(!jsonAddon["DownloadCount"].is_null()) {
+		addon.setTotaltDownloads(jsonAddon["DownloadCount"]);
 	}
 	return addon;
 }
+
+nlohmann::json Curse::getLatestFile(nlohmann::json jsonAddon) {
+	nlohmann::json latestFile;
+	std::string latestFileDate;
+	std::string latestGameVersion;
+	for(auto& latestFiles : jsonAddon["LatestFiles"]) {
+		if(latestFileDate.empty()) {
+			latestFileDate = latestFiles["FileDate"];
+		}
+		if(latestGameVersion.empty()) {
+			latestGameVersion = latestFiles["GameVersion"].at(0);
+		}
+		if(!latestFiles["IsAlternate"]) {
+			// Try to determine the highest game version supported
+			std::string fileHighestVersion = latestFiles["GameVersion"].at(0);
+			for(auto& gameVersion : latestFiles["GameVersion"]) {
+				std::cout << "File with version: " << gameVersion << std::endl;
+				if(fileHighestVersion <= gameVersion) {
+					std::cout << "Found higher version: "
+						<< gameVersion
+						<< " than previous version: "
+						<< fileHighestVersion << std::endl;
+					fileHighestVersion = gameVersion;
+				}
+			}
+			if(latestGameVersion < fileHighestVersion) {
+				latestFile = latestFiles;
+				latestFileDate = latestFiles["FileDate"];
+				latestGameVersion = fileHighestVersion;
+			// If the game version is the same, let the FileDate decide
+			// which game files are the newest
+			} else if(latestGameVersion == fileHighestVersion
+				&& latestFileDate < latestFiles["FileDate"]) {
+				latestFile = latestFiles;
+				latestFileDate = latestFiles["FileDate"];
+				latestGameVersion = fileHighestVersion;
+			}
+		}
+	}
+
+	return latestFile;
+}
+

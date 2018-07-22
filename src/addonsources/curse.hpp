@@ -17,7 +17,8 @@ class Curse : AddonSource {
 	private:
 		void downloadArchive();
 		void decompressArchive();
-		Addon parseAddonData(nlohmann::json object);
+		Addon parseAddonData(nlohmann::json jsonAddon);
+		nlohmann::json getLatestFile(nlohmann::json jsonAddon);
 
 		nlohmann::json jsonData;
 };
