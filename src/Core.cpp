@@ -125,6 +125,10 @@ std::vector<Addon> Core::search(std::string search){
 	// return addons;
 }
 
+std::vector<Addon> Core::search(std::string search, bool caseSensitive){
+	return curse.search(search, caseSensitive);
+}
+
 std::vector<Addon> Core::list(){
 	std::vector<Addon> list;
 	DIR *dirptr = opendir(Core::m_InstallPath.c_str());
@@ -293,20 +297,31 @@ std::vector<Addon> Core::indexInstalled() {
 		return empty;
 	}
 
-	std::vector<Addon> installed;
+	std::vector<std::string> installed;
+	std::vector<Addon> addons;
 
 	findAddons(addonDir, installed);
 
 	// TODO: Find a way to get an overview of what is
 	// the main addon folder and what is dependecies of an addon
 	for(auto& addon : installed) {
-		// std::cout << "Found installed addon: " << addon << std::endl;
+		// std::cout << "Searching for addon name: " << addon << std::endl;
+		std::vector<Addon> matches = curse.search(addon);
+		if(!matches.empty()) {
+			addons.push_back(matches.at(0));
+		}
+		// }
 	}
 
+	// for(auto& installedAddon : addons) {
+		// std::cout << "Found installed addon: " << installedAddon.getName() << std::endl;
+	// }
+
+	return addons;
 }
 
 void Core::findAddons( const boost::filesystem::path & dirPath,
-			std::vector<Addon>& addons) {
+			std::vector<std::string>& addons) {
 	namespace bf = boost::filesystem;
 
 	bf::directory_iterator endItr;
@@ -314,8 +329,7 @@ void Core::findAddons( const boost::filesystem::path & dirPath,
 		itr != endItr;
 		++itr) {
 		if(bf::is_directory(itr->status())) {
-			Addon addon(itr->path().filename().native());
-			addons.push_back(addon);
+			addons.push_back(itr->path().filename().native());
 		}
 	}
 }

@@ -12,7 +12,9 @@ class Curse : AddonSource {
 	public:
 		Curse();
 		~Curse();
-		virtual std::vector<Addon> search(std::string name) override;
+		virtual std::vector<Addon> search(std::string searchTerm) override;
+		virtual std::vector<Addon> search(std::string searchTerm,
+							bool caseSensetive);
 		bool updateDatabase() override;
 	private:
 		void downloadArchive();

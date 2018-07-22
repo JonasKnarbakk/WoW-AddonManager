@@ -6,21 +6,21 @@
 #include <iostream>
 #include <thread>
 
-extern "C" void searchEntryActivated(GtkWidget *widget, GtkWidget *entry){
-    GList *children, *it;
+// extern "C" void searchEntryActivated(GtkWidget *widget, GtkWidget *entry){
+    // GList *children, *it;
 
-    children = gtk_container_get_children(GTK_CONTAINER(GUI::searchContainer));
-    for(it = children; it != NULL; it = g_list_next(it)){
-        gtk_widget_destroy(GTK_WIDGET(it->data));
-    }
-    g_list_free(children);
-    // gtk_widget_show_all(GUI::searchContainer);
+    // children = gtk_container_get_children(GTK_CONTAINER(GUI::searchContainer));
+    // for(it = children; it != NULL; it = g_list_next(it)){
+        // gtk_widget_destroy(GTK_WIDGET(it->data));
+    // }
+    // g_list_free(children);
+    // // gtk_widget_show_all(GUI::searchContainer);
 
-    const gchar *entry_text;
-    entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
-    std::string searchText = entry_text;
-    std::thread(Core::searchGUI, searchText).detach();
-}
+    // const gchar *entry_text;
+    // entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
+    // std::string searchText = entry_text;
+    // // std::thread(Core::searchGUI, searchText).detach();
+// }
 
 GtkWidget *GUI::searchContainer;
 GtkWidget *GUI::spinner;

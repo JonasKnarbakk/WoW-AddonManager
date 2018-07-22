@@ -8,3 +8,4 @@ addons/
 build/
 .idea/
 cmake-build-debug/
+tags

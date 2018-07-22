@@ -18,6 +18,7 @@ class Core{
 		static void updateDatabase();
 		static void downloadHTML(std::vector<std::string> *list, std::string url, unsigned int count);
 		static std::vector<Addon> search(std::string search);
+		static std::vector<Addon> search(std::string search, bool caseSensitive);
 		static std::vector<Addon> list();
 		static void install(std::string addon);
 		static bool sortByNames(const Addon &a1, const Addon &a2);
@@ -30,7 +31,7 @@ class Core{
 		static std::string m_InstallPath;
 		static std::vector<Addon> m_Installed;
 		static void findAddons( const boost::filesystem::path& dirPath,
-					std::vector<Addon>& addons);
+					std::vector<std::string>& addons);
 };
 
 #endif

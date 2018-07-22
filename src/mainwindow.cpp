@@ -14,29 +14,36 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 	// Create model
-	model = new QStandardItemModel(0, 0);
+	searchModel = new QStandardItemModel(0, 0);
 
-	// Prepare the loading icon
-	QMovie *movie = new QMovie("resources/ajax-loader.gif");
+	// Prepare the loading icon on the search button
+	QMovie *movie = new QMovie("resources/ajax-loader-search.gif");
 	ui->loadingIcon->setMovie(movie);
 	ui->loadingIcon->setVisible(false);
+
+	// Prepare the loading icon on the installed tab
+	QMovie *movieTwo = new QMovie("resources/ajax-loader-installed.gif");
+	ui->installedLoadingLabel->setMovie(movieTwo);
+	ui->installedLoadingLabel->setVisible(false);
 
 	// Populate the header
 	QStringList columnNames;
 	columnNames << "Image" << "Name" << "Version" << "Supports" << "Downloads" << " ";
-	model->setHorizontalHeaderLabels(columnNames);
+	searchModel->setHorizontalHeaderLabels(columnNames);
 
 	// Make the table stretch to the window size
-	ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-	ui->tableView->setModel(model);
+	ui->searchTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	ui->searchTableView->setModel(searchModel);
 
 	// Get the addon install path
 	ui->installPathField->setText(QString("%0").arg(Core::getInstallPath().c_str()));
 
 	// Set row height
-	QHeaderView *verticalHeader = ui->tableView->verticalHeader();
+	QHeaderView *verticalHeader = ui->searchTableView->verticalHeader();
 	verticalHeader->setSectionResizeMode(QHeaderView::Fixed);
 	verticalHeader->setDefaultSectionSize(100);
+
+	startIndexAddonsThread();
 }
 
 MainWindow::~MainWindow()
@@ -90,7 +97,7 @@ void Worker::run() {
 	std::cout << "doWork started" << std::endl;
 	/* Expensive operation */
 	std::cout << "Searching for: " << searchParam << std::endl;
-	std::vector<Addon> addons = Core::search(searchParam);
+	std::vector<Addon> addons = Core::search(searchParam, false);
 
 	std::vector<QPixmap> thumbnails;
 	std::vector<std::thread> threads;
@@ -142,38 +149,102 @@ void MainWindow::handleResults(const QVariant& variantAddons, const QVariant& va
 	} else {
 		return;
 	}
-	model->setRowCount(0);
+	searchModel->setRowCount(0);
 	int i = 0;
 	for(Addon addon : addons) {
 		QLabel* label = new QLabel();
 		label->setPixmap(thumbnails.at(i));
 		label->setScaledContents(true);
-		model->setItem(i, 0, nullptr);
-		ui->tableView->setIndexWidget(model->index(i, 0), label);
+		searchModel->setItem(i, 0, nullptr);
+		ui->searchTableView->setIndexWidget(searchModel->index(i, 0), label);
 
-		// ui->tableView->setIndexWidget(model->index(i, 0), thumbnail);
+		// ui->searchTableView->setIndexWidget(searchModel->index(i, 0), thumbnail);
 		QStandardItem* name = new QStandardItem(QString("%0").arg(addon.getName().c_str()));
-		model->setItem(i, 1, name);
+		searchModel->setItem(i, 1, name);
 		QStandardItem* version = new QStandardItem(QString("%0").arg(addon.getVersion().c_str()));
-		model->setItem(i, 2, version);
+		searchModel->setItem(i, 2, version);
 		QStandardItem* supported = new QStandardItem(QString("%0").arg(addon.getSupportedVersion().c_str()));
-		model->setItem(i, 3, supported);
+		searchModel->setItem(i, 3, supported);
 		QStandardItem* downloads = new QStandardItem;
 		downloads->setData(addon.getTotalDownloads(), Qt::DisplayRole);
-		model->setItem(i, 4, downloads);
-		model->setItem(i, 5, nullptr);
+		searchModel->setItem(i, 4, downloads);
+		searchModel->setItem(i, 5, nullptr);
 		QPushButton* downloadLink = new QPushButton();
 		downloadLink->setText("Download");
 		downloadLink->setProperty("link", QVariant(addon.getDownloadLink().c_str()));
 		connect(downloadLink, SIGNAL(released()), this, SLOT(downloadAddon()));
-		ui->tableView->setIndexWidget(model->index(i, 5), downloadLink);
+		ui->searchTableView->setIndexWidget(searchModel->index(i, 5), downloadLink);
 		i++;
 	}
 
-	ui->tableView->sortByColumn(4, Qt::DescendingOrder);
+	ui->searchTableView->sortByColumn(4, Qt::DescendingOrder);
 
 	searching = false;
 	showSearchButton();
+}
+
+void AddonIndexer::run() {
+	std::vector<Addon> results = Core::indexInstalled();
+	QVariant variantAddons;
+	variantAddons.setValue(results);
+	emit addonIndexResultReady(variantAddons);
+}
+
+void MainWindow::handleAddonIndexResuslts(const QVariant& variantAddons) {
+	installedModel = new QStandardItemModel(0, 0);
+	// Populate the header
+	QStringList columnNames;
+	columnNames << "Image" << "Name" << "Version" << "Supports" << "Downloads" << " ";
+	installedModel->setHorizontalHeaderLabels(columnNames);
+
+	// Make the table stretch to the window size
+	ui->installedTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	ui->installedTableView->setModel(installedModel);
+
+	// Set row height
+	QHeaderView *verticalHeader = ui->installedTableView->verticalHeader();
+	verticalHeader->setSectionResizeMode(QHeaderView::Fixed);
+	verticalHeader->setDefaultSectionSize(100);
+
+	std::vector<Addon> addons;
+	if (variantAddons.canConvert<std::vector<Addon>>()) {
+		addons = variantAddons.value<std::vector<Addon>>();
+	} else {
+		return;
+	}
+	installedModel->setRowCount(0);
+	int i = 0;
+	for(Addon addon : addons) {
+		QLabel* label = new QLabel();
+		QPixmap pixmap("resources/Tux-icon-mono.svg");
+		label->setPixmap(pixmap);
+		label->setScaledContents(true);
+		installedModel->setItem(i, 0, nullptr);
+		ui->installedTableView->setIndexWidget(installedModel->index(i, 0), label);
+
+		QStandardItem* name = new QStandardItem(QString("%0").arg(addon.getName().c_str()));
+		installedModel->setItem(i, 1, name);
+		QStandardItem* version = new QStandardItem(QString("%0").arg(addon.getVersion().c_str()));
+		installedModel->setItem(i, 2, version);
+		QStandardItem* supported = new QStandardItem(QString("%0").arg(addon.getSupportedVersion().c_str()));
+		installedModel->setItem(i, 3, supported);
+		QStandardItem* downloads = new QStandardItem;
+		downloads->setData(addon.getTotalDownloads(), Qt::DisplayRole);
+		installedModel->setItem(i, 4, downloads);
+		installedModel->setItem(i, 5, nullptr);
+		// QPushButton* downloadLink = new QPushButton();
+		// downloadLink->setText("Download");
+		// downloadLink->setProperty("link", QVariant(addon.getDownloadLink().c_str()));
+		// connect(downloadLink, SIGNAL(released()), this, SLOT(downloadAddon()));
+		// ui->installedTableView->setIndexWidget(installedModel->index(i, 5), downloadLink);
+		i++;
+	}
+
+	ui->installedTableView->sortByColumn(4, Qt::DescendingOrder);
+
+	std::cout << "Indexing done!" << std::endl;
+	indexing = false;
+	showLoadingIconInstalledTab(false);
 }
 
 void MainWindow::startSearchThread() {
@@ -186,10 +257,31 @@ void MainWindow::startSearchThread() {
 	}
 }
 
+void MainWindow::startIndexAddonsThread() {
+	if(!indexing) {
+		showLoadingIconInstalledTab(true);
+		indexing = true;
+		AddonIndexer* indexer = new AddonIndexer();
+		connect(indexer, &AddonIndexer::addonIndexResultReady, this, &MainWindow::handleAddonIndexResuslts);
+		connect(indexer, &Worker::finished, indexer, &QObject::deleteLater);
+		indexer->start();
+	}
+}
+
 void MainWindow::showLoadingIcon() {
 	ui->searchButton->setVisible(false);
 	ui->loadingIcon->setVisible(true);
 	ui->loadingIcon->movie()->start();
+}
+
+void MainWindow::showLoadingIconInstalledTab(bool show) {
+	ui->installedLoadingLabel->setVisible(show);
+	ui->installedTableView->setVisible(!show);
+	if(show) {
+		ui->installedLoadingLabel->movie()->start();
+	} else {
+		ui->installedLoadingLabel->movie()->stop();
+	}
 }
 
 void MainWindow::showSearchButton() {

@@ -18,20 +18,28 @@ Curse::~Curse() {
 }
 
 std::vector<Addon> Curse::search(std::string searchTerm) {
+	return search(searchTerm, false);
+}
 
+std::vector<Addon> Curse::search(std::string searchTerm, bool caseSensetive) {
 	// Any search with less than 3 characters
 	// is trouble in the current implementation
 	if(searchTerm.length() < 3){
 		return {};
 	}
 
-	boost::algorithm::to_lower(searchTerm);
+	if(!caseSensetive) {
+		boost::algorithm::to_lower(searchTerm);
+	}
+
 	std::vector<Addon> addons;
 
 	// Search the json data
 	for (nlohmann::json obj : jsonData["data"]) {
 		std::string currentObject = obj["Name"].get<std::string>();
-		boost::algorithm::to_lower(currentObject);
+		if(!caseSensetive){
+			boost::algorithm::to_lower(currentObject);
+		}
 		if(currentObject.find(searchTerm) != std::string::npos) {
 			addons.push_back(parseAddonData(obj));
 		}
@@ -170,12 +178,7 @@ nlohmann::json Curse::getLatestFile(nlohmann::json jsonAddon) {
 			// Try to determine the highest game version supported
 			std::string fileHighestVersion = latestFiles["GameVersion"].at(0);
 			for(auto& gameVersion : latestFiles["GameVersion"]) {
-				std::cout << "File with version: " << gameVersion << std::endl;
 				if(fileHighestVersion <= gameVersion) {
-					std::cout << "Found higher version: "
-						<< gameVersion
-						<< " than previous version: "
-						<< fileHighestVersion << std::endl;
 					fileHighestVersion = gameVersion;
 				}
 			}

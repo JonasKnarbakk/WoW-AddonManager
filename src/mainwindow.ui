@@ -11,18 +11,18 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>GWAM</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="SearchTab">
        <attribute name="title">
-        <string>Tab 1</string>
+        <string>Search</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
         <item row="1" column="1">
@@ -36,7 +36,13 @@
          <widget class="QLineEdit" name="searchField"/>
         </item>
         <item row="0" column="0" colspan="3">
-         <widget class="QTableView" name="tableView">
+         <widget class="QTableView" name="searchTableView">
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::NoSelection</enum>
+          </property>
           <property name="gridStyle">
            <enum>Qt::NoPen</enum>
           </property>
@@ -57,18 +63,47 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="QWidget" name="InstalledTab">
        <attribute name="title">
-        <string>Tab 2</string>
+        <string>Installed</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="installPathField"/>
+        <item row="3" column="1" colspan="2">
+         <widget class="QTableView" name="installedTableView">
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::NoSelection</enum>
+          </property>
+          <property name="showGrid">
+           <bool>true</bool>
+          </property>
+          <property name="gridStyle">
+           <enum>Qt::NoPen</enum>
+          </property>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+         </widget>
         </item>
         <item row="1" column="2">
          <widget class="QPushButton" name="installPathButton">
           <property name="text">
-           <string>PushButton</string>
+           <string>Change Path</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="installPathField"/>
+        </item>
+        <item row="4" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <widget class="QLabel" name="installedLoadingLabel">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string>TextLabel</string>
           </property>
          </widget>
         </item>
@@ -84,7 +119,7 @@
      <x>0</x>
      <y>0</y>
      <width>970</width>
-     <height>29</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

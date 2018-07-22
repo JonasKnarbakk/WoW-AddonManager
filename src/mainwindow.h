@@ -13,7 +13,7 @@ Q_DECLARE_METATYPE(std::vector<Addon>);
 Q_DECLARE_METATYPE(std::vector<QPixmap>);
 
 namespace Ui {
-class MainWindow;
+	class MainWindow;
 }
 
 class Worker : public QThread {
@@ -31,10 +31,23 @@ class Worker : public QThread {
 	void resultReady(const QVariant& variantAddons, const QVariant& variantThumbnails);
 };
 
+class AddonIndexer : public QThread {
+	Q_OBJECT
+	
+	public:
+		AddonIndexer() {}
+
+	private:
+		void run() override;
+	signals:
+	void addonIndexResultReady(const QVariant& variantAddons);
+};
+
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
 	QThread workerThread;
+	QThread addonIndexerThread;
 public:
 	explicit MainWindow(QWidget* parent = 0);
 	~MainWindow();
@@ -42,6 +55,7 @@ public:
 
 public slots:
 	void handleResults(const QVariant& variantAddons, const QVariant& variantThumbnails);
+	void handleAddonIndexResuslts(const QVariant& variantAddons);
 private slots:
 	void on_searchButton_released();
 	void on_searchField_returnPressed();
@@ -53,11 +67,15 @@ signals:
 
 private:
 	Ui::MainWindow* ui;
-	QStandardItemModel* model;
+	QStandardItemModel* searchModel;
+	QStandardItemModel* installedModel;
 	bool searching = false;
+	bool indexing = false;
 
 	void startSearchThread();
+	void startIndexAddonsThread();
 	void showLoadingIcon();
+	void showLoadingIconInstalledTab(bool show);
 	void showSearchButton();
 	static std::mutex thumbnailLock;
 };

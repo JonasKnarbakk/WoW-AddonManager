@@ -38,7 +38,6 @@ int main(int argc, char * argv[]){
 		logger.log("Could not detect a valid internet connection", Logger::logLevel::INFO);
 	}
 	Core::checkSettings();
-	Core::indexInstalled();
 	Core::updateDatabase();
 
 	if(argc == 1) {
