@@ -44,6 +44,9 @@ int main(int argc, char * argv[]){
 		// Launch in graphical mode
 		QApplication app(argc, argv);
 		MainWindow mainWindow;
+		QIcon appIcon;
+		appIcon.addFile(":/images/tux");
+		app.setWindowIcon(appIcon);
 		mainWindow.show();
 		return app.exec();
 	} else {

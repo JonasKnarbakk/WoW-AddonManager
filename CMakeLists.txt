@@ -23,10 +23,10 @@ FIND_PACKAGE (Qt5 REQUIRED Core Widgets Gui)
 # Set Library and include paths (These are valid if installed via NuGet)
 SET (CURL_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/build/packages/curl.7.30.0.2/build/native/lib/v110/Win32/Debug/dynamic/libcurl.lib)
 SET (CURL_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build/packages/curl.7.30.0.2/build/native/include)
-SET	(BZIP2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build/packages/bzip2.v140.1.0.6.10/build/native/include)
+SET (BZIP2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/build/packages/bzip2.v140.1.0.6.10/build/native/include)
 SET (BZIP2_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/build/packages/bzip2.v140.1.0.6.10/build/native/lib/Win32/Debug/libbz2d.lib)
 SET (Boost_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/build/packages/boost.1.66.0.0/lib/native/include)
-SET (Boost_LIBRARY_DIRS 
+SET (Boost_LIBRARY_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/build/packages/boost_iostreams-vc141.1.66.0.0/lib/native
 	${CMAKE_CURRENT_SOURCE_DIR}/build/packages/boost_bzip2-vc141.1.66.0.0/lib/native
 	${CMAKE_CURRENT_SOURCE_DIR}/build/packages/boost_filesystem-vc141.1.66.0.0/lib/native
@@ -42,8 +42,11 @@ SET (DIRENT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/windowslibs/dirent-master/in
 SET(MAINWINDOW_UI ${PROJECT_SOURCE_DIR}/mainwindow.ui)
 SET(MAINWINDOW_SRC ${PROJECT_SOURCE_DIR}/mainwindow.cpp)
 SET(MAINWINDOW_HDR ${PROJECT_SOURCE_DIR}/mainwindow.h)
+SET(RESOURCE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc)
+
 QT5_WRAP_UI(MAINWINDOW_WRAP ${MAINWINDOW_UI})
 QT5_WRAP_CPP(MAINWINDOW_MOC ${MAINWINDOW_HDR})
+QT5_ADD_RESOURCES(UI_RESOURCES ${RESOURCE_FILE})
 
 ELSE ()
 
@@ -52,11 +55,15 @@ FIND_PACKAGE(CURL REQUIRED)
 
 # Qt5
 FIND_PACKAGE (Qt5 REQUIRED Core Widgets Gui)
+
 SET(MAINWINDOW_UI ${PROJECT_SOURCE_DIR}/mainwindow.ui)
 SET(MAINWINDOW_SRC ${PROJECT_SOURCE_DIR}/mainwindow.cpp)
 SET(MAINWINDOW_HDR ${PROJECT_SOURCE_DIR}/mainwindow.h)
+SET(RESOURCE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/resources/resources.qrc)
+
 QT5_WRAP_UI(MAINWINDOW_WRAP ${MAINWINDOW_UI})
 QT5_WRAP_CPP(MAINWINDOW_MOC ${MAINWINDOW_HDR})
+QT5_ADD_RESOURCES(UI_RESOURCES ${RESOURCE_FILE})
 
 # Compression library
 FIND_PACKAGE(Boost REQUIRED COMPONENTS system iostreams filesystem)
@@ -114,20 +121,21 @@ SET (PROJECT_SRCS
 )
 
 ADD_EXECUTABLE (${PROJECT_NAME}
-        ${PROJECT_SRCS}
-        ${MAINWINDOW_SRC}
-        ${MAINWINDOW_WRAP}
-        ${MAINWINDOW_MOC}
+	${PROJECT_SRCS}
+	${MAINWINDOW_SRC}
+	${MAINWINDOW_WRAP}
+	${MAINWINDOW_MOC}
+	${UI_RESOURCES}
 )
 
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}
-        # ${GTK3_LIBRARIES}
-        ${CURL_LIBRARIES}
+	# ${GTK3_LIBRARIES}
+	${CURL_LIBRARIES}
 	${LIBZIP_LIBRARIES}
 	${MINIZIP_LIBRARIES}
-        ${CMAKE_THREAD_LIBS_INIT}
-        ${Boost_LIBRARIES}
+	${CMAKE_THREAD_LIBS_INIT}
+	${Boost_LIBRARIES}
 	Qt5::Core
 	Qt5::Widgets
 	Qt5::Gui

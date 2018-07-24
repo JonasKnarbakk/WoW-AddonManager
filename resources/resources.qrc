@@ -1,0 +1,10 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/images">
+	<file alias="bar-loader">images/ajax-loader-installed.gif</file>
+	<file alias="circle-loader">images/ajax-loader-search.gif</file>
+	<file alias="tux">images/tux-icon-mono.svg</file>
+	<file alias="magnify-loader">images/magnify.gif</file>
+	<file alias="ring-loader">images/ring-alt.gif</file>
+	<file alias="refresh-icon">images/refresh_icon.png</file>
+</qresource>
+</RCC>

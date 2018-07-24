@@ -68,7 +68,7 @@
         <string>Installed</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="3" column="1" colspan="2">
+        <item row="3" column="0" colspan="3">
          <widget class="QTableView" name="installedTableView">
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
@@ -87,25 +87,85 @@
           </attribute>
          </widget>
         </item>
-        <item row="1" column="2">
-         <widget class="QPushButton" name="installPathButton">
+        <item row="1" column="1" alignment="Qt::AlignHCenter">
+         <widget class="QLabel" name="installedLoadingText">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
-           <string>Change Path</string>
+           <string>Indexing Addons...</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="installPathField"/>
-        </item>
-        <item row="4" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-         <widget class="QLabel" name="installedLoadingLabel">
+        <item row="0" column="1" alignment="Qt::AlignHCenter">
+         <widget class="QLabel" name="installedLoadingGif">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="layoutDirection">
            <enum>Qt::LeftToRight</enum>
           </property>
           <property name="text">
            <string>TextLabel</string>
           </property>
+          <property name="scaledContents">
+           <bool>false</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
+        </item>
+        <item row="7" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <item alignment="Qt::AlignBottom">
+           <widget class="QPushButton" name="installedRefreshButton">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset>
+              <normaloff>../resources/images/refresh_icon.png</normaloff>../resources/images/refresh_icon.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item alignment="Qt::AlignBottom">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Addon Directory</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item alignment="Qt::AlignBottom">
+           <widget class="QLineEdit" name="installPathField">
+            <property name="alignment">
+             <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            </property>
+           </widget>
+          </item>
+          <item alignment="Qt::AlignBottom">
+           <widget class="QPushButton" name="installPathButton">
+            <property name="text">
+             <string>Change Path</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>

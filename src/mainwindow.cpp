@@ -13,18 +13,22 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+
+	// ui->setWindowIcon(appIcon);
+
 	// Create model
 	searchModel = new QStandardItemModel(0, 0);
 
 	// Prepare the loading icon on the search button
-	QMovie *movie = new QMovie("resources/ajax-loader-search.gif");
+	QMovie *movie = new QMovie(":images/bar-loader");
 	ui->loadingIcon->setMovie(movie);
 	ui->loadingIcon->setVisible(false);
 
 	// Prepare the loading icon on the installed tab
-	QMovie *movieTwo = new QMovie("resources/ajax-loader-installed.gif");
-	ui->installedLoadingLabel->setMovie(movieTwo);
-	ui->installedLoadingLabel->setVisible(false);
+	QMovie *movieTwo = new QMovie(":images/magnify-loader");
+	ui->installedLoadingGif->setMovie(movieTwo);
+	ui->installedLoadingGif->setVisible(false);
+	ui->installedLoadingText->setVisible(false);
 
 	// Populate the header
 	QStringList columnNames;
@@ -115,11 +119,11 @@ void Worker::run() {
 				threads.clear();
 			}
 
-			QPixmap pixmap("resources/Tux-icon-mono.svg");
+			QPixmap pixmap(":images/tux");
 			thumbnails.push_back(pixmap);
 		} else {
 			// If there is no image we will display a happy little penguin for now :)
-			QPixmap pixmap("resources/Tux-icon-mono.svg");
+			QPixmap pixmap(":images/tux");
 			thumbnails.push_back(pixmap);
 		}
 	}
@@ -216,7 +220,7 @@ void MainWindow::handleAddonIndexResuslts(const QVariant& variantAddons) {
 	int i = 0;
 	for(Addon addon : addons) {
 		QLabel* label = new QLabel();
-		QPixmap pixmap("resources/Tux-icon-mono.svg");
+		QPixmap pixmap(":images/tux");
 		label->setPixmap(pixmap);
 		label->setScaledContents(true);
 		installedModel->setItem(i, 0, nullptr);
@@ -275,12 +279,13 @@ void MainWindow::showLoadingIcon() {
 }
 
 void MainWindow::showLoadingIconInstalledTab(bool show) {
-	ui->installedLoadingLabel->setVisible(show);
+	ui->installedLoadingGif->setVisible(show);
+	ui->installedLoadingText->setVisible(show);
 	ui->installedTableView->setVisible(!show);
 	if(show) {
-		ui->installedLoadingLabel->movie()->start();
+		ui->installedLoadingGif->movie()->start();
 	} else {
-		ui->installedLoadingLabel->movie()->stop();
+		ui->installedLoadingGif->movie()->stop();
 	}
 }
 
