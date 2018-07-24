@@ -33,7 +33,7 @@ class Worker : public QThread {
 
 class AddonIndexer : public QThread {
 	Q_OBJECT
-	
+
 	public:
 		AddonIndexer() {}
 
@@ -60,6 +60,7 @@ private slots:
 	void on_searchButton_released();
 	void on_searchField_returnPressed();
 	void on_installPathButton_released();
+	void onAddonRightClick(QPoint point);
 	void downloadAddon();
 
 signals:

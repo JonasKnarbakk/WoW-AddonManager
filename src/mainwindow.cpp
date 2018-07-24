@@ -42,6 +42,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	// Get the addon install path
 	ui->installPathField->setText(QString("%0").arg(Core::getInstallPath().c_str()));
 
+	ui->installedTableView->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(ui->installedTableView, SIGNAL(customContextMenuRequested(QPoint)), SLOT(onAddonRightClick(QPoint)));
+
 	// Set row height
 	QHeaderView *verticalHeader = ui->searchTableView->verticalHeader();
 	verticalHeader->setSectionResizeMode(QHeaderView::Fixed);
@@ -317,3 +320,12 @@ void MainWindow::getThumbnail(const std::string url) {
 	bf::remove(tmpFileLocation);
 	// thumbnailLock.unlock();
 }
+
+void MainWindow::onAddonRightClick(QPoint point) {
+	QModelIndex index = ui->installedTableView->indexAt(point);
+	QStandardItem *item = installedModel->itemFromIndex(index.sibling(index.row(), 1));
+	if(item != nullptr) {
+		std::cout << "Text in field is: " << item->text().toStdString() << std::endl;
+	}
+}
+
