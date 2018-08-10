@@ -3,4 +3,7 @@ test:
     LANG: C.UTF-8
   script:
   - apt-get update -qy
+  - mkdir build && cd build
+  - cmake ..
+  - make
 
