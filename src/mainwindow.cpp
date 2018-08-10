@@ -110,25 +110,9 @@ void Worker::run() {
 	std::vector<std::thread> threads;
 
 	for (Addon addon : addons) {
-		if(addon.getImageLink().compare("Not set") != 0) {
-			threads.push_back(std::thread(MainWindow::getThumbnail,
-					addon.getImageLink()));
-
-			// We don't want the amount of threads to get out of hand
-			if(threads.size() >= std::thread::hardware_concurrency()) {
-				for(auto& thread : threads) {
-					thread.join();
-				}
-				threads.clear();
-			}
-
-			QPixmap pixmap(":images/tux");
-			thumbnails.push_back(pixmap);
-		} else {
-			// If there is no image we will display a happy little penguin for now :)
-			QPixmap pixmap(":images/tux");
-			thumbnails.push_back(pixmap);
-		}
+		// If there is no image we will display a happy little penguin for now :)
+		QPixmap pixmap(":images/tux");
+		thumbnails.push_back(pixmap);
 	}
 
 	for(auto& thread : threads) {
