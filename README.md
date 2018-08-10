@@ -64,7 +64,7 @@ libboost-all-dev libminizip-dev libzip-dev nlohmann-json-dev`
 ### Compile
 The convetion with cmake is to do a out of tree build:
 
-`mkdir build && cmake .. && make`
+`mkdir build && cd build && cmake .. && make`
 
 ### Run
 `./gwam`
