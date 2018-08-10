@@ -3,7 +3,7 @@
 # GWAM (NNF ¯\\\_(ツ)\_/¯)
 
 GWAM is a generic addon manager for world of warcraft. It currently relies
-on the availability the same database file the twitch client downloads to
+on the availability of the same database file the twitch client uses to
 get information about available addons on the twitch website, but in the future
 more sources can be added like wowinterface and git repositories.
 
