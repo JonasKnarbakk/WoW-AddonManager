@@ -11,7 +11,9 @@ Since World of Warcraft itself works really well through wine (especially with
 [DXVK](https://github.com/doitsujin/dxvk), which is really easy to use due to
 [Lutris](https://github.com/lutris/lutris).) the only thing I was missing when
 playing on Linux was a addon manager that took care of updating my addons
-automatically. When I started this project the Twitch client did not work
+automatically.
+
+When I started this project the Twitch client did not work
 through Wine. I've had some luck getting it to work afterwards, but even if it
 ends up working I'm more interested in a native client. Hence this project!
 
