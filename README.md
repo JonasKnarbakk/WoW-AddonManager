@@ -1,3 +1,5 @@
+[![pipeline status](https://gitlab.com/jonasknarbakk/WoW-AddonManager/badges/master/pipeline.svg)](https://gitlab.com/jonasknarbakk/WoW-AddonManager/commits/master)
+
 ## Installation
 
 Dependencies
