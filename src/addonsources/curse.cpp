@@ -147,6 +147,11 @@ Addon Curse::parseAddonData(nlohmann::json jsonAddon) {
 			addon.setVersion(latestFile["FileName"]);
 			addon.setSupportedVersion(latestFile["GameVersion"].at(0));
 			addon.setDownloadLink(latestFile["DownloadURL"]);
+			std::vector<std::string> modules;
+			for(auto& module : latestFile["Modules"]) {
+				modules.push_back(module["Foldername"]);
+			}
+			addon.setModules(modules);
 		}
 	}
 	if(!jsonAddon["Attachments"].is_null()) {

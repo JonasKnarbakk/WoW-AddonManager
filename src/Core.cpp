@@ -110,7 +110,8 @@ std::vector<Addon> Core::list(){
 }
 
 void Core::install(std::string addon){
-	std::string downloadLink = "https://www.curseforge.com/wow/addons/" + addon + "/download";
+	std::string downloadLink = "https://www.curseforge.com/wow/addons/"
+					+ addon + "/download";
 	printf("download link: %s\n", downloadLink.c_str());
 	Connection c;
 	std::string filename = addon + ".html";
@@ -128,6 +129,23 @@ void Core::install(std::string addon){
 		printf("Failed to connect to: %s\n", downloadLink.c_str());
 	}
 	remove(filename.c_str());
+}
+
+// Recursively removes the folders in the vector
+void Core::removeAddon(std::vector<std::string> modules) {
+	namespace bf = boost::filesystem;
+
+	for(auto& module : modules) {
+		bf::path path(m_InstallPath + "/" + module);
+		if(bf::exists(path)) {
+			std::cout << "Removing directory: " << path.string()
+				<< std::endl;
+			bf::remove_all(path);
+		} else {
+			std::cout << "Directory " << path.string()
+				<< " does not exist" << std::endl;
+		}
+	}
 }
 
 bool Core::sortByNames(const Addon &a1, const Addon &a2){
@@ -174,9 +192,9 @@ void Core::extractZipArchive(std::string filepath) {
 			printf("==================\n");
 			len = strlen(sb.name);
 			printf("Name: [%s], ", sb.name);
-			printf("Size: [%llu], ", sb.size);
+			printf("Size: [%lu], ", sb.size);
 			printf("mtime: [%u]\n", (unsigned int)sb.mtime);
-			printf("File name: ", sb.name);
+			printf("File name: %s", sb.name);
 
 
 			std::vector<std::string> folders;
@@ -305,7 +323,8 @@ void Core::findTocFiles( const boost::filesystem::path &dirPath,
 		itr != endItr;
 		++itr) {
 		if(bf::is_regular_file(itr->status())
-		&& boost::algorithm::ends_with(itr->path().filename().string(), ".toc")) {
+		&& boost::algorithm::ends_with(itr->path().filename().string(),
+								".toc")) {
 			tocFiles.push_back(itr->path().string());
 		}
 	}
@@ -345,7 +364,8 @@ void Core::setCorrectVersion(std::vector<std::string> &tocFiles, Addon &addon) {
 		std::string addonName = tocFile.substr(start, tocFile.length());
 		addonName = addonName.substr(0, addonName.length()-4);
 		if(addon.getName().find(addonName) != std::string::npos) {
-			std::string version = extractVersionFromTocFile(tocFile);
+			std::string version = extractVersionFromTocFile(
+								tocFile);
 			if(!version.empty()) {
 				addon.setVersion(version);
 				versionSet = true;

@@ -11,6 +11,7 @@
 
 Q_DECLARE_METATYPE(std::vector<Addon>);
 Q_DECLARE_METATYPE(std::vector<QPixmap>);
+Q_DECLARE_METATYPE(std::vector<std::string>);
 
 namespace Ui {
 	class MainWindow;
@@ -63,6 +64,7 @@ private slots:
 	void on_installedRefreshButton_released();
 	void onAddonRightClick(QPoint point);
 	void downloadAddon();
+	void removeAddon();
 
 signals:
 	void operate(const QString &);

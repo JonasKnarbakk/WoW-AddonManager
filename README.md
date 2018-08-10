@@ -34,10 +34,10 @@ application useless until som alternative sources are added.
 	- [x] Parse json into addon objects
 	- [x] Download compressed file
 	- [x] Unpack compressed file to addon directory
-- [ ] Remove addons
-	- [ ] Add remove button to UI
-	- [ ] Find folders that belong to addon
-	- [ ] Delete folders that belong to addon
+- [x] Remove addons
+	- [x] Add remove button to UI
+	- [x] Find folders that belong to addon
+	- [x] Delete folders that belong to addon
 - [ ] Update addons when available
 	- [x] Set addon directory
 	- [x] Index already installed addons

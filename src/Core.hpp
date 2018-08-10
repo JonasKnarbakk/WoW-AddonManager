@@ -47,6 +47,9 @@ class Core{
 		// to the set addon folder.
 		static void install(std::string addon);
 
+		// Recursively removes the folders in the vector
+		static void removeAddon(std::vector<std::string> modules);
+
 		// Comparison operator to get a vector to sort by name
 		// in DESC order
 		static bool sortByNames(const Addon &a1, const Addon &a2);

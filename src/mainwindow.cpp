@@ -78,8 +78,6 @@ void MainWindow::on_installPathButton_released() {
 	Core::setInstallPath(defaultPath.absolutePath().toUtf8().constData());
 }
 
-// TODO: Create index over unzipped files so cleanup will
-// be easy when updating or uninstalling
 void MainWindow::downloadAddon() {
 	QObject* obj = sender();
 	QVariant value = obj->property("link");
@@ -98,6 +96,21 @@ void MainWindow::downloadAddon() {
 	conn.save_data_to_file(filepath);
 
 	Core::extractZipArchive(filepath);
+}
+
+void MainWindow::removeAddon() {
+	QPushButton *button = (QPushButton*) sender();
+	QVariant variantModules = button->property("modules");
+	std::vector<std::string> modules;
+	if(variantModules.canConvert<std::vector<std::string>>()) {
+		modules = variantModules.value<std::vector<std::string>>();
+	}
+
+	QWidget *widget = (QWidget*) button->parent();
+	if(widget) {
+		int row = ui->installedTableView->indexAt(widget->pos()).row();
+		ui->installedTableView->model()->removeRow(row);
+	}
 }
 
 void Worker::run() {
@@ -223,11 +236,13 @@ void MainWindow::handleAddonIndexResuslts(const QVariant& variantAddons) {
 		downloads->setData(addon.getTotalDownloads(), Qt::DisplayRole);
 		installedModel->setItem(i, 4, downloads);
 		installedModel->setItem(i, 5, nullptr);
-		// QPushButton* downloadLink = new QPushButton();
-		// downloadLink->setText("Download");
-		// downloadLink->setProperty("link", QVariant(addon.getDownloadLink().c_str()));
-		// connect(downloadLink, SIGNAL(released()), this, SLOT(downloadAddon()));
-		// ui->installedTableView->setIndexWidget(installedModel->index(i, 5), downloadLink);
+		QPushButton* removeButton = new QPushButton();
+		removeButton->setText("Remove");
+		QVariant variantModules;
+		variantModules.setValue(addon.getModules());
+		removeButton->setProperty("modules", QVariant(variantModules));
+		connect(removeButton, SIGNAL(released()), this, SLOT(removeAddon()));
+		ui->installedTableView->setIndexWidget(installedModel->index(i, 5), removeButton);
 		i++;
 	}
 
