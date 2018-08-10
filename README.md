@@ -19,7 +19,8 @@ Did not work through wine. I've had some luck getting it to work afterwards, but
 even if it ends up working I'm more interested in a native client.
 Hence this project!
 
-DISCLAIMER: GWAM currently relies on the availability of the same database file
+### Disclaimer
+GWAM currently relies on the availability of the same database file
 that the twitch client uses to get information about available addons in the
 twitch database. This means that the developers of the twitch client can at any
 point add some proper authentication to that endpoint, which will render this
