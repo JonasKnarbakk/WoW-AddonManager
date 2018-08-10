@@ -1,4 +1,4 @@
-[![pipeline status](https://gitlab.com/jonasknarbakk/WoW-AddonManager/badges/master/pipeline.svg)](https://gitlab.com/jonasknarbakk/WoW-AddonManager/commits/master)
+[![pipeline status](https://gitlab.com/jonasknarbakk/WoW-AddonManager/badges/qt5/pipeline.svg)](https://gitlab.com/jonasknarbakk/WoW-AddonManager/commits/qt5)
 
 ## Installation
 
