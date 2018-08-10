@@ -2,10 +2,11 @@
 
 # GWAM (NNF ¯\\\_(ツ)\_/¯)
 
-GWAM is a generic addon manager for world of warcraft. It currently relies
-on the availability of the same database file the twitch client uses to
-get information about available addons on the twitch website, but in the future
-more sources can be added like wowinterface and git repositories.
+GWAM is a generic addon manager for world of warcraft. It uses the curse addon
+database to download and keep your addons up to date. Other addon sources might
+be available in the future.
+
+![](resources/images/gwam-preview.png)
 
 Since World of Warcraft itself works really well through wine (especially with
 [DXVK](https://github.com/doitsujin/dxvk), which is really easy to use due to
@@ -13,11 +14,16 @@ Since World of Warcraft itself works really well through wine (especially with
 playing on Linux was a addon manager that took care of updating my addons
 automatically.
 
-When I started this project the twitch client did not work
-through wine. I've had some luck getting it to work afterwards, but even if it
-ends up working I'm more interested in a native client. Hence this project!
+When I started this project the popular windows addon manager of choice, twitch.
+Did not work through wine. I've had some luck getting it to work afterwards, but
+even if it ends up working I'm more interested in a native client.
+Hence this project!
 
-![](resources/images/gwam-preview.png)
+DISCLAIMER: GWAM currently relies on the availability of the same database file
+that the twitch client uses to get information about available addons in the
+twitch database. This means that the developers of the twitch client can at any
+point add some proper authentication to that endpoint, which will render this
+application useless until som alternative sources are added.
 
 ### TODO before 1.0 release:
 
