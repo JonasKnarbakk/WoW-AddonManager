@@ -45,6 +45,12 @@ application useless until som alternative sources are added.
 	- [ ] Use remove function to remove old version
 	- [ ] Use download function to download and extract new version
 
+### Issue tracking
+Issure tracking is managed on
+[GitLab](https://gitlab.com/jonasknarbakk/WoW-AddonManager/issues)
+issues reported on GitHub will be ignored as i don't want to manage two
+separate issue trackers.
+
 ## Build instructions
 
 ### Dependencies
