@@ -2,6 +2,7 @@
 
 # GWAM (NNF ¯\\\_(ツ)\_/¯)
 
+### Intro
 GWAM is a generic addon manager for world of warcraft. It uses the curse addon
 database to download and keep your addons up to date. Other addon sources might
 be available in the future.
