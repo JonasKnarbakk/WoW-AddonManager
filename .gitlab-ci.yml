@@ -1,9 +1,26 @@
-test:
-  variables:
-    LANG: C.UTF-8
-  script:
-  - apt-get update -qy
-  - mkdir build && cd build
-  - cmake ..
-  - make
+image: ubuntu:latest
 
+variables:
+  LANG: C.UTF-8
+
+stages:
+  - build
+  - test
+
+compile:
+  stage: build
+  before_script:
+    - apt-get update -qy
+    - apt-get install cmake build-essential libcurl4-openssl-dev qt5-default
+      libboost-all-dev libminizip-dev libzip-dev nlohmann-json-dev -qy
+  script:
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make
+
+run_tests:
+  stage: test
+  script:
+    - echo "Tests are for cowards"
+    # Well, will add them soon TM
