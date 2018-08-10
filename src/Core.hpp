@@ -30,8 +30,11 @@ class Core{
 		static Logger logger;
 		static std::string m_InstallPath;
 		static std::vector<Addon> m_Installed;
-		static void findAddons( const boost::filesystem::path& dirPath,
+		static void findAddons(const boost::filesystem::path& dirPath,
 					std::vector<std::string>& addons);
+		static void findTocFiles(const boost::filesystem::path &dirPath,
+			std::vector<std::string> &tocFiles);
+		static std::string extractVersionFromTocFile(std::string tocFilePath);
 };
 
 #endif

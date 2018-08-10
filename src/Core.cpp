@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <boost/algorithm/string/predicate.hpp>
 
 Curse Core::curse;
 Logger Core::logger;
@@ -297,6 +298,13 @@ std::vector<Addon> Core::indexInstalled() {
 		return empty;
 	}
 
+	std::vector<std::string> tocFiles;
+	findTocFiles(addonDir, tocFiles);
+
+	for(auto& tocFile : tocFiles) {
+		extractVersionFromTocFile(tocFile);
+	}
+
 	std::vector<std::string> installed;
 	std::vector<Addon> addons;
 
@@ -308,6 +316,22 @@ std::vector<Addon> Core::indexInstalled() {
 		// std::cout << "Searching for addon name: " << addon << std::endl;
 		std::vector<Addon> matches = curse.search(addon);
 		if(!matches.empty()) {
+			bool versionSet = false;
+			for(auto& tocFile : tocFiles) {
+				std::size_t start = tocFile.find_last_of("/")+1;
+				std::string addonName = tocFile.substr(start, tocFile.length());
+				addonName = addonName.substr(0, addonName.length()-4);
+				if(matches.at(0).getName().find(addonName) != std::string::npos) {
+					std::string version = extractVersionFromTocFile(tocFile);
+					if(!version.empty()) {
+						matches.at(0).setVersion(version);
+						versionSet = true;
+					}
+				}
+			}
+			if(!versionSet) {
+				std::cout << "Warning!: Coudn't determine addon version" << std::endl;
+			}
 			addons.push_back(matches.at(0));
 		}
 		// }
@@ -320,8 +344,8 @@ std::vector<Addon> Core::indexInstalled() {
 	return addons;
 }
 
-void Core::findAddons( const boost::filesystem::path & dirPath,
-			std::vector<std::string>& addons) {
+void Core::findAddons( const boost::filesystem::path &dirPath,
+			std::vector<std::string> &addons) {
 	namespace bf = boost::filesystem;
 
 	bf::directory_iterator endItr;
@@ -332,6 +356,37 @@ void Core::findAddons( const boost::filesystem::path & dirPath,
 			addons.push_back(itr->path().filename().native());
 		}
 	}
+}
+
+void Core::findTocFiles( const boost::filesystem::path &dirPath,
+			std::vector<std::string> &tocFiles) {
+	namespace bf = boost::filesystem;
+
+	bf::recursive_directory_iterator endItr;
+	for(bf::recursive_directory_iterator itr(dirPath);
+		itr != endItr;
+		++itr) {
+		if(bf::is_regular_file(itr->status())
+		&& boost::algorithm::ends_with(itr->path().filename().string(), ".toc")) {
+			tocFiles.push_back(itr->path().string());
+		}
+	}
+}
+
+std::string Core::extractVersionFromTocFile(std::string tocFilePath) {
+	std::ifstream tocFile(tocFilePath);
+
+	std::string line;
+	while (std::getline(tocFile, line)) {
+		std::istringstream iss(line);
+		if(!(iss)) {
+			break; // Error
+		}
+		if(line.find("## Version:") != std::string::npos) {
+			return line.substr(11, line.length());
+		}
+	}
+	return "";
 }
 
 bool Core::checkConnection() {
