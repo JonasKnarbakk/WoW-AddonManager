@@ -6,7 +6,7 @@ GWAM is a generic addon manager for world of warcraft. It uses the curse addon
 database to download and keep your addons up to date. Other addon sources might
 be available in the future.
 
-![](resources/images/gwam-preview.png)
+![GWAM Preview](resources/images/gwam-preview.png)
 
 Since World of Warcraft itself works really well through wine (especially with
 [DXVK](https://github.com/doitsujin/dxvk), which is really easy to use due to
@@ -56,7 +56,7 @@ application useless until som alternative sources are added.
 ### Install prerequisites
 To build from source on Ubuntu you need to install the dependencies:
 
-`sudo apt install cmake build-essential libcurl4-openssl-dev qt5-default 
+`sudo apt install cmake build-essential libcurl4-openssl-dev qt5-default
 libboost-all-dev libminizip-dev libzip-dev nlohmann-json-dev`
 
 ### Compile
