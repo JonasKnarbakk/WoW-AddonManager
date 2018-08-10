@@ -329,3 +329,6 @@ void MainWindow::onAddonRightClick(QPoint point) {
 	}
 }
 
+void MainWindow::on_installedRefreshButton_released() {
+	startIndexAddonsThread();
+}
