@@ -1,0 +1,6 @@
+test:
+  variables:
+    LANG: C.UTF-8
+  script:
+  - apt-get update -qy
+
