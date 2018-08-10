@@ -55,22 +55,24 @@ application useless until som alternative sources are added.
 
 ### Install prerequisites
 To build from source on Ubuntu you need to install the dependencies:
-> sudo apt install cmake build-essential libcurl4-openssl-dev qt5-default \\\
-libboost-all-dev libminizip-dev libzip-dev nlohmann-json-dev
+
+`sudo apt install cmake build-essential libcurl4-openssl-dev qt5-default 
+libboost-all-dev libminizip-dev libzip-dev nlohmann-json-dev`
 
 ### Compile
 The convetion with cmake is to do a out of tree build:
-> mkdir build && cmake .. && make
+
+`mkdir build && cmake .. && make`
 
 ### Run
-> ./gwam
+`./gwam`
 
 or
 
-> make run
+`make run`
 
 ### Install
-> sudo make install
+`sudo make install`
 
 ### Uninstall
-> sudo make unsintall
+`sudo make unsintall`
