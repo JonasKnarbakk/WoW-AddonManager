@@ -49,7 +49,8 @@ void Core::checkSettings(){
 		while((c = fgetc(fileptr)) != EOF){
 			if(c == '\n'){
 				if(line.find("PATH=") != std::string::npos){
-					printf("Setting path to: %s\n", line.substr(5).c_str());
+					printf("Setting path to: %s\n",
+							line.substr(5).c_str());
 					Core::setInstallPath(line.substr(5));
 				}
 				line = "";
@@ -67,7 +68,9 @@ void Core::updateDatabase() {
 	curse.updateDatabase();
 }
 
-void Core::downloadHTML(std::vector<std::string> *list, std::string url, unsigned int count){
+void Core::downloadHTML(std::vector<std::string> *list,
+			std::string url,
+			unsigned int count){
 	Connection conn;
 	std::string filename = "addon" + std::to_string(count) + ".html";
 	if(conn.connect(url)){
@@ -79,51 +82,6 @@ void Core::downloadHTML(std::vector<std::string> *list, std::string url, unsigne
 
 std::vector<Addon> Core::search(std::string search){
 	return curse.search(search);
-	// std::vector<Addon> addons;
-	// std::vector<std::string> filesCreated;
-
-	// std::string website = "https://www.curseforge.com/wow/addons/search?search=";
-	// std::transform(search.begin(), search.end(), search.begin(), [](char ch) {
-		// return ch == ' ' ? '+' : ch;
-	// });
-	// std::string finalSearch = website + search;
-	// Connection con;
-	// if(con.connect(finalSearch)){
-		// con.save_data_to_file("searchResults.html");
-	// }
-
-	// HTMLParser parse("searchResults.html");
-	// parse.init();
-
-	// remove("searchResults.html");
-
-	// // Do a multithreaded download for the HTML for all addons found
-	// std::vector<std::string> result = parse.getAddonLinks();
-	// std::vector<std::string>::iterator it;
-
-	// std::vector<std::thread> threads;
-	// std::vector<std::thread>::iterator tit;
-
-	// int count = 1;
-
-	// for(it = begin(result); it != end(result); ++it){
-		// threads.push_back(std::thread(downloadHTML, &filesCreated, *it, count));
-		// count++;
-	// }
-
-	// // Wait for all started threads to finish
-	// for(tit = begin(threads); tit != end(threads); ++tit){
-		// tit->join();
-	// }
-	// // Cleanup, delete all files created
-	// for(it = begin(filesCreated); it != end(filesCreated); ++it){
-		// std::string filename = *it;
-		// HTMLParser p(filename);
-		// addons.push_back(p.getAddon());
-		// remove(filename.c_str());
-	// }
-
-	// return addons;
 }
 
 std::vector<Addon> Core::search(std::string search, bool caseSensitive){
@@ -143,7 +101,8 @@ std::vector<Addon> Core::list(){
 		}
 	} else {
 		std::stringstream errorMessage;
-		errorMessage << "Could not open directory: %s\n", Core::m_InstallPath.c_str();
+		errorMessage << "Could not open directory: %s\n",
+				Core::m_InstallPath.c_str();
 		logger.log(errorMessage.str(), Logger::logLevel::INFO);
 	}
 	closedir(dirptr);
@@ -179,6 +138,7 @@ bool Core::sortByDownloads(const Addon &a1, const Addon &a2){
 	return a1.getTotalDownloads() > a2.getTotalDownloads();
 }
 
+// TODO: Refactor this nightmare ¯\_(ツ)_/¯
 void Core::extractZipArchive(std::string filepath) {
 	const char* archive;
 	struct zip* za;
@@ -299,6 +259,7 @@ std::vector<Addon> Core::indexInstalled() {
 	}
 
 	std::vector<std::string> tocFiles;
+
 	findTocFiles(addonDir, tocFiles);
 
 	for(auto& tocFile : tocFiles) {
@@ -310,36 +271,13 @@ std::vector<Addon> Core::indexInstalled() {
 
 	findAddons(addonDir, installed);
 
-	// TODO: Find a way to get an overview of what is
-	// the main addon folder and what is dependecies of an addon
 	for(auto& addon : installed) {
-		// std::cout << "Searching for addon name: " << addon << std::endl;
 		std::vector<Addon> matches = curse.search(addon);
 		if(!matches.empty()) {
-			bool versionSet = false;
-			for(auto& tocFile : tocFiles) {
-				std::size_t start = tocFile.find_last_of("/")+1;
-				std::string addonName = tocFile.substr(start, tocFile.length());
-				addonName = addonName.substr(0, addonName.length()-4);
-				if(matches.at(0).getName().find(addonName) != std::string::npos) {
-					std::string version = extractVersionFromTocFile(tocFile);
-					if(!version.empty()) {
-						matches.at(0).setVersion(version);
-						versionSet = true;
-					}
-				}
-			}
-			if(!versionSet) {
-				std::cout << "Warning!: Coudn't determine addon version" << std::endl;
-			}
+			setCorrectVersion(tocFiles, matches.at(0));
 			addons.push_back(matches.at(0));
 		}
-		// }
 	}
-
-	// for(auto& installedAddon : addons) {
-		// std::cout << "Found installed addon: " << installedAddon.getName() << std::endl;
-	// }
 
 	return addons;
 }
@@ -396,5 +334,26 @@ bool Core::checkConnection() {
 		return true;
 	} else {
 		return false;
+	}
+}
+
+
+void Core::setCorrectVersion(std::vector<std::string> &tocFiles, Addon &addon) {
+	bool versionSet = false;
+	for(auto& tocFile : tocFiles) {
+		std::size_t start = tocFile.find_last_of("/")+1;
+		std::string addonName = tocFile.substr(start, tocFile.length());
+		addonName = addonName.substr(0, addonName.length()-4);
+		if(addon.getName().find(addonName) != std::string::npos) {
+			std::string version = extractVersionFromTocFile(tocFile);
+			if(!version.empty()) {
+				addon.setVersion(version);
+				versionSet = true;
+			}
+		}
+	}
+	if(!versionSet) {
+		std::cout << "Warning!: Coudn't determine addon version for "
+			<< addon.getName() << std::endl;
 	}
 }
